@@ -46,11 +46,11 @@ public class Notification {
 
     private Integer senderId;
 
-    // @ManyToOne
-    // @JoinColumn(name = "recipient_id", insertable = false, updatable = false)
-    // private User recipient;
+     @ManyToOne
+     @JoinColumn(name = "recipient_id", insertable = false, updatable = false)
+     private User recipient;
 
-    // @ManyToOne
-    // @JoinColumn(name = "sender_id", insertable = false, updatable = false)
-    // private User sender;
+     @ManyToOne
+     @JoinColumn(name = "sender_id", insertable = false, updatable = false)
+     private User sender;
 }

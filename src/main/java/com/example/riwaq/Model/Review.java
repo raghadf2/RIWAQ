@@ -38,11 +38,11 @@ public class Review {
     @NotNull
     private Integer bookId;
 
-    // @ManyToOne
-    // @JoinColumn(name = "user_id", insertable = false, updatable = false)
-    // private User user;
+     @ManyToOne
+     @JoinColumn(name = "user_id", insertable = false, updatable = false)
+     private User user;
 
-    // @ManyToOne
-    // @JoinColumn(name = "book_id", insertable = false, updatable = false)
-    // private Book book;
+     @ManyToOne
+     @JoinColumn(name = "book_id", insertable = false, updatable = false)
+     private Book book;
 }

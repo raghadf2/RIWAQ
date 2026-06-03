@@ -66,24 +66,22 @@ public class BookService {
 
         bookRepository.delete(book);
     }
-//    public void addBookFromGoogle(Integer userId, String title){
-//
-//        User user = userRepository.findUserById(userId);
-//
-//        if(user == null){
-//            throw new ApiException("User not found");
-//        }
-//
-//        GoogleBookDto googleBook =
-//                googleBookService.searchBook(title);
-//
-//        Book book = new Book();
-//
-//        book.setTitle(googleBook.getTitle());
-//        book.setAuthor(googleBook.getAuthor());
-//        book.setPageCount(googleBook.getPageCount());
-//        book.setCreatedByUserId(user.getId());
-//
-//        bookRepository.save(book);
-//    }
+
+    public void addBookFromGoogle(Integer userId, String title){
+
+        User user = userRepository.findUserById(userId);
+
+        if(user == null){
+            throw new ApiException("User not found");
+        }
+
+        Book book = new Book();
+        GoogleBookDto googleBook = googleBookService.searchBook(title);
+
+        book.setTitle(googleBook.getTitle());
+        book.setAuthor(googleBook.getAuthor());
+        book.setPageCount(googleBook.getPageCount());
+
+        bookRepository.save(book);
+    }
 }

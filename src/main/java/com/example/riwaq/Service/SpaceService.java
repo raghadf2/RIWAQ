@@ -1,8 +1,8 @@
 package com.example.riwaq.Service;
 
 import com.example.riwaq.Api.ApiException;
-import com.example.riwaq.DTO.DTOIN.SpaceDTOIn;
-import com.example.riwaq.DTO.DTOOUT.SpaceDTOOut;
+import com.example.riwaq.DTO.IN.NotificationDTOIn;
+import com.example.riwaq.DTO.OUT.PostDTOOut;
 import com.example.riwaq.Model.Space;
 import com.example.riwaq.Repository.SpaceRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ public class SpaceService {
 
     private final SpaceRepository spaceRepository;
 
-    public void addSpace(SpaceDTOIn dto){
+    public void addSpace(NotificationDTOIn.SpaceDTOIn dto){
 
         Space space = new Space();
 
@@ -28,15 +28,15 @@ public class SpaceService {
         spaceRepository.save(space);
     }
 
-    public List<SpaceDTOOut> getAllSpaces(){
+    public List<PostDTOOut.SpaceDTOOut> getAllSpaces(){
 
         List<Space> spaces = spaceRepository.findAll();
 
-        List<SpaceDTOOut> dtoOutList = new ArrayList<>();
+        List<PostDTOOut.SpaceDTOOut> dtoOutList = new ArrayList<>();
 
         for(Space space : spaces){
 
-            SpaceDTOOut dtoOut = new SpaceDTOOut();
+            PostDTOOut.SpaceDTOOut dtoOut = new PostDTOOut.SpaceDTOOut();
 
             dtoOut.setSpaceId(space.getSpaceId());
             dtoOut.setBookId(space.getBookId());
@@ -49,7 +49,7 @@ public class SpaceService {
         return dtoOutList;
     }
 
-    public void updateSpace(Integer spaceId , SpaceDTOIn dto){
+    public void updateSpace(Integer spaceId , NotificationDTOIn.SpaceDTOIn dto){
 
         Space space = spaceRepository.findBySpaceId(spaceId)
                 .orElseThrow(() -> new ApiException("Space not found"));

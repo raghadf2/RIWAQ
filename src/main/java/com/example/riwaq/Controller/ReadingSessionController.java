@@ -1,7 +1,6 @@
 package com.example.riwaq.Controller;
 
 import com.example.riwaq.Api.ApiResponse;
-import com.example.riwaq.DTO.DTOIN.ReadingSessionDTOIn;
 import com.example.riwaq.Service.ReadingSessionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,7 @@ public class ReadingSessionController {
     private final ReadingSessionService readingSessionService;
 
     @PostMapping("/add")
-    public ResponseEntity<?> addSession(@RequestBody @Valid ReadingSessionDTOIn dto){
+    public ResponseEntity<?> addSession(@RequestBody @Valid com.example.riwaq.DTO.IN.FriendshipDTOIn.ReadingSessionDTOIn dto){
         readingSessionService.addSession(dto);
         return ResponseEntity.status(200).body(new ApiResponse("Session added successfully"));
     }
@@ -27,7 +26,7 @@ public class ReadingSessionController {
     }
 
     @PutMapping("/update/{sessionId}")
-    public ResponseEntity<?> updateSession(@PathVariable Integer sessionId, @RequestBody @Valid ReadingSessionDTOIn dto){
+    public ResponseEntity<?> updateSession(@PathVariable Integer sessionId, @RequestBody @Valid com.example.riwaq.DTO.IN.FriendshipDTOIn.ReadingSessionDTOIn dto){
         readingSessionService.updateSession(sessionId,dto);
         return ResponseEntity.status(200).body(new ApiResponse("Session updated successfully"));
     }

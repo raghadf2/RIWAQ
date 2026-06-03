@@ -13,4 +13,15 @@ public class PostDTOOut {
     private Integer pageNumber;
     private Integer userId;
     private Integer userBookId;
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Data
+    public static class SpaceDTOOut {
+
+        private Integer spaceId;
+        private Integer bookId;
+        private String name;
+        private String description;
+    }
 }

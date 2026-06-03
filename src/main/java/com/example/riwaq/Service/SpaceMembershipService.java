@@ -1,8 +1,8 @@
 package com.example.riwaq.Service;
 
 import com.example.riwaq.Api.ApiException;
-import com.example.riwaq.DTO.DTOIN.SpaceMembershipDTOIn;
-import com.example.riwaq.DTO.DTOOUT.SpaceMembershipDTOOut;
+import com.example.riwaq.DTO.IN.PostDTOIn;
+import com.example.riwaq.DTO.OUT.FriendshipDTOOut;
 import com.example.riwaq.Model.SpaceMembership;
 import com.example.riwaq.Repository.SpaceMembershipRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class SpaceMembershipService {
 
     private final SpaceMembershipRepository spaceMembershipRepository;
 
-    public void addMembership(SpaceMembershipDTOIn dto){
+    public void addMembership(PostDTOIn.SpaceMembershipDTOIn dto){
 
         SpaceMembership membership = new SpaceMembership();
 
@@ -29,15 +29,15 @@ public class SpaceMembershipService {
         spaceMembershipRepository.save(membership);
     }
 
-    public List<SpaceMembershipDTOOut> getAllMemberships(){
+    public List<FriendshipDTOOut.SpaceMembershipDTOOut> getAllMemberships(){
 
         List<SpaceMembership> memberships = spaceMembershipRepository.findAll();
 
-        List<SpaceMembershipDTOOut> dtoOutList = new ArrayList<>();
+        List<FriendshipDTOOut.SpaceMembershipDTOOut> dtoOutList = new ArrayList<>();
 
         for(SpaceMembership membership : memberships){
 
-            SpaceMembershipDTOOut dtoOut = new SpaceMembershipDTOOut();
+            FriendshipDTOOut.SpaceMembershipDTOOut dtoOut = new FriendshipDTOOut.SpaceMembershipDTOOut();
 
             dtoOut.setMembershipId(membership.getMembershipId());
             dtoOut.setSpaceId(membership.getSpaceId());
@@ -51,7 +51,7 @@ public class SpaceMembershipService {
     }
 
     public void updateMembership(Integer membershipId,
-                                 SpaceMembershipDTOIn dto){
+                                 PostDTOIn.SpaceMembershipDTOIn dto){
 
         SpaceMembership membership = spaceMembershipRepository
                 .findByMembershipId(membershipId)

@@ -21,4 +21,25 @@ public class FriendshipDTOIn {
     @NotEmpty(message = "Status must not be empty")
     @Pattern(regexp = "PENDING|ACCEPTED|BLOCKED|REJECTED", message = "Status must be PENDING, ACCEPTED, BLOCKED, or REJECTED")
     private String status;
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Data
+    public static class ReadingSessionDTOIn {
+
+        @NotNull(message = "Book id is required")
+        private Integer bookId;
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Data
+    public static class SessionParticipantDTOIn {
+
+        @NotNull(message = "Session id is required")
+        private Integer sessionId;
+
+        @NotNull(message = "User id is required")
+        private Integer userId;
+    }
 }

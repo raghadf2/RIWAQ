@@ -1,5 +1,6 @@
 package com.example.riwaq.DTO.OUT;
 
+import com.example.riwaq.Model.ReadingSession;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,4 +19,14 @@ public class NotificationDTOOut {
     private LocalDateTime createdAt;
     private Integer recipientId;
     private Integer senderId;
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Data
+    public static class ReadingSessionDTOOut {
+
+        private Integer sessionId;
+        private Integer bookId;
+        private ReadingSession.SessionStatus status;
+    }
 }

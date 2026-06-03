@@ -34,11 +34,11 @@ public class Post {
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
-    // @ManyToOne
-    // @JoinColumn(name = "user_id", insertable = false, updatable = false)
-    // private User user;
+     @ManyToOne
+     @JoinColumn(name = "user_id", insertable = false, updatable = false)
+     private User user;
 
-    // @ManyToOne
-    // @JoinColumn(name = "user_book_id", insertable = false, updatable = false)
-    // private UserBook userBook;
+     @ManyToOne
+     @JoinColumn(name = "user_book_id", insertable = false, updatable = false)
+     private UserBook userBook;
 }

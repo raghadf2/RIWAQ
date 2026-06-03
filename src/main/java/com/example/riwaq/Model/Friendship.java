@@ -31,11 +31,11 @@ public class Friendship {
     @Column(nullable = false)
     private String status;
 
-    // @ManyToOne
-    // @JoinColumn(name = "sender_id", insertable = false, updatable = false)
-    // private User sender;
+     @ManyToOne
+     @JoinColumn(name = "sender_id", insertable = false, updatable = false)
+     private User sender;
 
-    // @ManyToOne
-    // @JoinColumn(name = "receiver_id", insertable = false, updatable = false)
-    // private User receiver;
+     @ManyToOne
+     @JoinColumn(name = "receiver_id", insertable = false, updatable = false)
+     private User receiver;
 }

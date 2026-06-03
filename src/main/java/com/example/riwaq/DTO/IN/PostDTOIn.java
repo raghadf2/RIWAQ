@@ -20,4 +20,16 @@ public class PostDTOIn {
     private Integer userId;
 
     private Integer userBookId;
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Data
+    public static class SpaceMembershipDTOIn {
+
+        @NotNull(message = "Space id is required")
+        private Integer spaceId;
+
+        @NotNull(message = "User id is required")
+        private Integer userId;
+    }
 }

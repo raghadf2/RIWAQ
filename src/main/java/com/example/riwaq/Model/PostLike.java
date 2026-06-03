@@ -25,11 +25,11 @@ public class PostLike {
     @NotNull
     private Integer postId;
 
-    // @ManyToOne
-    // @JoinColumn(name = "user_id", insertable = false, updatable = false)
-    // private User user;
+     @ManyToOne
+     @JoinColumn(name = "user_id", insertable = false, updatable = false)
+     private User user;
 
-    // @ManyToOne
-    // @JoinColumn(name = "post_id", insertable = false, updatable = false)
-    // private Post post;
+     @ManyToOne
+     @JoinColumn(name = "post_id", insertable = false, updatable = false)
+     private Post post;
 }

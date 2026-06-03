@@ -1,8 +1,8 @@
 package com.example.riwaq.Service;
 
 import com.example.riwaq.Api.ApiException;
-import com.example.riwaq.DTO.DTOIN.ReadingSessionDTOIn;
-import com.example.riwaq.DTO.DTOOUT.ReadingSessionDTOOut;
+import com.example.riwaq.DTO.IN.FriendshipDTOIn;
+import com.example.riwaq.DTO.OUT.NotificationDTOOut;
 import com.example.riwaq.Model.ReadingSession;
 import com.example.riwaq.Repository.ReadingSessionRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ public class ReadingSessionService {
 
     private final ReadingSessionRepository readingSessionRepository;
 
-    public void addSession(ReadingSessionDTOIn dto){
+    public void addSession(FriendshipDTOIn.ReadingSessionDTOIn dto){
 
         ReadingSession session = new ReadingSession();
 
@@ -27,15 +27,15 @@ public class ReadingSessionService {
         readingSessionRepository.save(session);
     }
 
-    public List<ReadingSessionDTOOut> getAllSessions(){
+    public List<NotificationDTOOut.ReadingSessionDTOOut> getAllSessions(){
 
         List<ReadingSession> sessions = readingSessionRepository.findAll();
 
-        List<ReadingSessionDTOOut> dtoOutList = new ArrayList<>();
+        List<NotificationDTOOut.ReadingSessionDTOOut> dtoOutList = new ArrayList<>();
 
         for(ReadingSession session : sessions){
 
-            ReadingSessionDTOOut dtoOut = new ReadingSessionDTOOut();
+            NotificationDTOOut.ReadingSessionDTOOut dtoOut = new NotificationDTOOut.ReadingSessionDTOOut();
 
             dtoOut.setSessionId(session.getSessionId());
             dtoOut.setBookId(session.getBookId());
@@ -48,7 +48,7 @@ public class ReadingSessionService {
     }
 
     public void updateSession(Integer sessionId,
-                              ReadingSessionDTOIn dto){
+                              FriendshipDTOIn.ReadingSessionDTOIn dto){
 
         ReadingSession session = readingSessionRepository
                 .findBySessionId(sessionId)
