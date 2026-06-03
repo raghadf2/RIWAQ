@@ -29,6 +29,8 @@ public class Post {
     //@NotNull : i think making book added optional is better
     private Integer userBookId;
 
+    private Integer likeCounter = 0;
+
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;

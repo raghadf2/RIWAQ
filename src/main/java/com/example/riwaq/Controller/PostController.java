@@ -24,6 +24,11 @@ public class PostController {
         return ResponseEntity.ok(postService.getPostById(id));
     }
 
+    @GetMapping("/get/page/{userBookId}/{currentPage}")
+    public ResponseEntity<?> getPostsByCurrentPage(@PathVariable Integer userBookId, @PathVariable Integer currentPage) {
+        return ResponseEntity.ok(postService.getPostsByCurrentPage(userBookId, currentPage));
+    }
+
     @PostMapping("/add")
     public ResponseEntity<?> addPost(@RequestBody @Valid PostDTOIn dto) {
         postService.addPost(dto);

@@ -3,6 +3,9 @@ package com.example.riwaq.Model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 
 @Entity
@@ -21,6 +24,10 @@ public class PostLike {
 
     @NotNull
     private Integer postId;
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
 
 //     @ManyToOne
 //     @JoinColumn(name = "user_id", insertable = false, updatable = false)

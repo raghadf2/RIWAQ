@@ -1,9 +1,10 @@
 package com.example.riwaq.Service;
 
 import com.example.riwaq.Api.ApiException;
-import com.example.riwaq.DTO.In.UserDtoIn;
+import com.example.riwaq.DTO.IN.UserDtoIn;
 import com.example.riwaq.Model.User;
 import com.example.riwaq.Repository.UserRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +33,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public void updateUser(Integer userId, UserDtoIn dto) {
+    public void updateUser(Integer userId, @Valid UserDtoIn dto) {
 
         User user = userRepository.findUserById(userId);
 

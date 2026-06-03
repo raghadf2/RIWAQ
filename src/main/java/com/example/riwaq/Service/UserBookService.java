@@ -1,7 +1,7 @@
 package com.example.riwaq.Service;
 
 import com.example.riwaq.Api.ApiException;
-import com.example.riwaq.DTO.In.UserBookDtoIn;
+import com.example.riwaq.DTO.IN.UserBookDtoIn;
 import com.example.riwaq.Model.Book;
 import com.example.riwaq.Model.User;
 import com.example.riwaq.Model.UserBook;

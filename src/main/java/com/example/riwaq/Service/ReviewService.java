@@ -32,6 +32,21 @@ public class ReviewService {
         return convertToDTO(review);
     }
 
+    public List<ReviewDTOOut> getReviewsByRating(Integer rating) {
+        if (rating < 1 || rating > 5) {
+            throw new ApiException("Rating must be between 1 and 5");
+        }
+        List<Review> reviews = reviewRepository.findReviewsByRating(rating);
+        if (reviews.isEmpty()) {
+            throw new ApiException("No reviews found with rating: " + rating);
+        }
+        return reviews.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    public List<ReviewDTOOut> getRecentReviews() {
+        return reviewRepository.findAllByOrderByCreatedAtDesc().stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
     public void addReview(ReviewDTOIn dto) {
         Review review = new Review();
         review.setContent(dto.getContent());

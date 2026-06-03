@@ -41,11 +41,11 @@ public class Review {
     private Integer bookId;
 
     @CreationTimestamp
-    @Column(updatable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp // I have never used this annotation before, I hope it works properly.
-    @Column(updatable = false)
+    @UpdateTimestamp
+    @Column(nullable = false)
     private LocalDateTime updatedAt;
 
 //     @ManyToOne
