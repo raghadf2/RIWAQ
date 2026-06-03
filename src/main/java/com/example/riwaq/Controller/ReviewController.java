@@ -24,9 +24,14 @@ public class ReviewController {
         return ResponseEntity.ok(reviewService.getReviewById(id));
     }
 
-    @GetMapping("/filter/rating/{rating}")
-    public ResponseEntity<?> getReviewsByRating(@PathVariable Integer rating) {
-        return ResponseEntity.ok(reviewService.getReviewsByRating(rating));
+    @GetMapping("/filter/highestRated")
+    public ResponseEntity<?> getBestRatedReviews() {
+        return ResponseEntity.ok(reviewService.getBestRatedReviews());
+    }
+
+    @GetMapping("/filter/lowestRated")
+    public ResponseEntity<?> getLowestRatedReviews() {
+        return ResponseEntity.ok(reviewService.getLowestRatedReviews());
     }
 
     @GetMapping("/filter/recent")
