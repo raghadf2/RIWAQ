@@ -1,4 +1,4 @@
-package com.example.riwaq.DTO.OUT;
+package com.example.riwaq.DTO.Out;
 
 import com.example.riwaq.Model.ReadingSession;
 import lombok.AllArgsConstructor;

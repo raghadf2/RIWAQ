@@ -1,7 +1,10 @@
 package com.example.riwaq.Controller;
 
 import com.example.riwaq.Api.ApiResponse;
-import com.example.riwaq.DTO.IN.SpaceMembershipDTOIn;
+<<<<<<< HEAD
+import com.example.riwaq.DTO.In.SpaceMembershipDTOIn;
+=======
+>>>>>>> origin/main
 import com.example.riwaq.Service.SpaceMembershipService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +19,7 @@ public class SpaceMembershipController {
     private final SpaceMembershipService spaceMembershipService;
 
     @PostMapping("/add")
-    public ResponseEntity<?> addMembership(@RequestBody @Valid com.example.riwaq.DTO.IN.PostDTOIn.SpaceMembershipDTOIn dto){
+    public ResponseEntity<?> addMembership(@RequestBody @Valid com.example.riwaq.DTO.In.PostDTOIn.SpaceMembershipDTOIn dto){
         spaceMembershipService.addMembership(dto);
         return ResponseEntity.status(200).body(new ApiResponse("Membership added successfully"));
     }

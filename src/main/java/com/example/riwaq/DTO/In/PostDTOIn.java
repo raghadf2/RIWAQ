@@ -1,4 +1,4 @@
-package com.example.riwaq.DTO.IN;
+package com.example.riwaq.DTO.In;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

@@ -1,18 +1,18 @@
-package com.example.riwaq.DTO.IN;
+package com.example.riwaq.DTO.In;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class SessionParticipantDTOIn {
+public class PostLikeDTOIn {
 
-    @NotNull(message = "Session id is required")
-    private Integer sessionId;
-
-    @NotNull(message = "User id is required")
+    @NotNull(message = "User ID must not be null")
     private Integer userId;
+
+    @NotNull(message = "Post ID must not be null")
+    private Integer postId;
 }
