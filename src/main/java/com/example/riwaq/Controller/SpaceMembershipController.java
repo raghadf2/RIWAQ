@@ -16,7 +16,7 @@ public class SpaceMembershipController {
     private final SpaceMembershipService spaceMembershipService;
 
     @PostMapping("/add")
-    public ResponseEntity<?> addMembership(@RequestBody @Valid com.example.riwaq.DTO.IN.PostDTOIn.SpaceMembershipDTOIn dto){
+    public ResponseEntity<?> addMembership(@RequestBody @Valid SpaceMembershipDTOIn dto){
         spaceMembershipService.addMembership(dto);
         return ResponseEntity.status(200).body(new ApiResponse("Membership added successfully"));
     }
@@ -26,15 +26,15 @@ public class SpaceMembershipController {
         return ResponseEntity.status(200).body(spaceMembershipService.getAllMemberships());
     }
 
-//    @PutMapping("/update/{membershipId}")
-//    public ResponseEntity<?> updateMembership(@PathVariable Integer membershipId, @RequestBody @Valid com.example.riwaq.DTO.IN.PostDTOIn.SpaceMembershipDTOIn dto){
-//        spaceMembershipService.updateMembership(membershipId,dto);
-//        return ResponseEntity.status(200).body(new ApiResponse("Membership updated successfully"));
-//    }
-//
-//    @DeleteMapping("/delete/{membershipId}")
-//    public ResponseEntity<?> deleteMembership(@PathVariable Integer membershipId){
-//        spaceMembershipService.deleteMembership(membershipId);
-//        return ResponseEntity.status(200).body(new ApiResponse("Membership deleted successfully"));
-//    }
+    @PutMapping("/update/{membershipId}")
+    public ResponseEntity<?> updateMembership(@PathVariable Integer membershipId, @RequestBody @Valid SpaceMembershipDTOIn dto){
+        spaceMembershipService.updateMembership(membershipId,dto);
+        return ResponseEntity.status(200).body(new ApiResponse("Membership updated successfully"));
+    }
+
+    @DeleteMapping("/delete/{membershipId}")
+    public ResponseEntity<?> deleteMembership(@PathVariable Integer membershipId){
+        spaceMembershipService.deleteMembership(membershipId);
+        return ResponseEntity.status(200).body(new ApiResponse("Membership deleted successfully"));
+    }
 }

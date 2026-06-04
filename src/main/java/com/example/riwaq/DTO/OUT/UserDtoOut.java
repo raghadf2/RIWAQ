@@ -4,12 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class SessionParticipantDTOOut {
-
-    private Integer participantId;
-    private Integer sessionId;
-    private Integer userId;
+public class UserDtoOut {
+    private String name;
+    private String username;
 }

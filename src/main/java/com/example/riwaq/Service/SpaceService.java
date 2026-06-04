@@ -1,8 +1,6 @@
 package com.example.riwaq.Service;
 
 import com.example.riwaq.Api.ApiException;
-import com.example.riwaq.DTO.IN.NotificationDTOIn;
-import com.example.riwaq.DTO.OUT.PostDTOOut;
 import com.example.riwaq.DTO.IN.SpaceDTOIn;
 import com.example.riwaq.DTO.OUT.SpaceDTOOut;
 import com.example.riwaq.Model.Space;
@@ -19,7 +17,13 @@ public class SpaceService {
 
     private final SpaceRepository spaceRepository;
 
-    public void addSpace(NotificationDTOIn.SpaceDTOIn dto){
+    public void addSpace(SpaceDTOIn dto){
+
+        Space existing = spaceRepository.findByBookIdAndName(dto.getBookId(), dto.getName());
+
+        if (existing != null) {
+            throw new ApiException("Space with same name already exists for this book");
+        }
 
         Space space = new Space();
 
@@ -30,15 +34,15 @@ public class SpaceService {
         spaceRepository.save(space);
     }
 
-    public List<PostDTOOut.SpaceDTOOut> getAllSpaces(){
+    public List<SpaceDTOOut> getAllSpaces(){
 
         List<Space> spaces = spaceRepository.findAll();
 
-        List<PostDTOOut.SpaceDTOOut> dtoOutList = new ArrayList<>();
+        List<SpaceDTOOut> dtoOutList = new ArrayList<>();
 
         for(Space space : spaces){
 
-            PostDTOOut.SpaceDTOOut dtoOut = new PostDTOOut.SpaceDTOOut();
+            SpaceDTOOut dtoOut = new SpaceDTOOut();
 
             dtoOut.setSpaceId(space.getSpaceId());
             dtoOut.setBookId(space.getBookId());
@@ -51,22 +55,39 @@ public class SpaceService {
         return dtoOutList;
     }
 
-    public void updateSpace(Integer spaceId , NotificationDTOIn.SpaceDTOIn dto){
+    public void updateSpace(Integer spaceId, SpaceDTOIn dto) {
 
-        Space space = spaceRepository.findBySpaceId(spaceId)
-                .orElseThrow(() -> new ApiException("Space not found"));
+        Space space = spaceRepository.findSpaceBySpaceId(spaceId);
 
-        space.setBookId(dto.getBookId());
+        if (space == null) {
+            throw new ApiException("Space not found");
+        }
+
+        if (space.getMemberships() != null && !space.getMemberships().isEmpty()) {
+            throw new ApiException("Cannot update space, it has active members");
+        }
+
         space.setName(dto.getName());
         space.setDescription(dto.getDescription());
+
+        if (dto.getBookId() != null) {
+            space.setBookId(dto.getBookId());
+        }
 
         spaceRepository.save(space);
     }
 
-    public void deleteSpace(Integer spaceId){
+    public void deleteSpace(Integer spaceId) {
 
-        Space space = spaceRepository.findBySpaceId(spaceId)
-                .orElseThrow(() -> new ApiException("Space not found"));
+        Space space = spaceRepository.findSpaceBySpaceId(spaceId);
+
+        if (space == null) {
+            throw new ApiException("Space not found");
+        }
+
+        if (space.getMemberships() != null && !space.getMemberships().isEmpty()) {
+            throw new ApiException("Cannot delete space with active members");
+        }
 
         spaceRepository.delete(space);
     }

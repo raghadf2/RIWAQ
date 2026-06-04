@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
@@ -43,8 +44,7 @@ public class NotificationService {
     public void sendWelcomeNotification(Integer userId) {
 
         String message =
-//                "Welcome to Riwaq 📚 Start your reading journey today."
-                "مرحبًا بك في رواق 📚، ابدأ رحلتك القرائية اليوم."  ;
+                "مرحبًا بك في رواق 📚، ابدأ رحلتك القرائية اليوم.";
 
         sendNotification(userId,
                 "WELCOME",
@@ -55,8 +55,7 @@ public class NotificationService {
                                           String bookTitle) {
 
         String message =
-//                bookTitle + " has been added to your reading list."
-                "تمت إضافة كتاب " + bookTitle + " إلى قائمة قراءاتك." ;
+                "تمت إضافة كتاب " + bookTitle + " إلى قائمة قراءاتك.";
 
         sendNotification(userId,
                 "BOOK_ADDED",
@@ -67,10 +66,7 @@ public class NotificationService {
                                               String bookTitle) {
 
         String message =
-//                "Congratulations! You completed "
-//                        + bookTitle
-//                        + ". Keep reading and discover your next favorite book."
-        "أحسنت! لقد أنهيت قراءة كتاب " + bookTitle + ". استمر في رحلتك القرائية.";
+                "أحسنت! لقد أنهيت قراءة كتاب " + bookTitle + ". استمر في رحلتك القرائية.";
 
         sendNotification(userId,
                 "BOOK_COMPLETED",
@@ -86,15 +82,37 @@ public class NotificationService {
         if (user == null) {
             throw new ApiException("User not found");
         }
+
+        String subject;
+
+        switch (type) {
+
+            case "WELCOME":
+                subject = "مرحبًا بك في رواق 📚";
+                break;
+
+            case "BOOK_ADDED":
+                subject = "تمت إضافة كتاب إلى قائمة قراءاتك 📖";
+                break;
+
+            case "BOOK_COMPLETED":
+                subject = "تهانينا على إنهاء الكتاب 🎉";
+                break;
+
+            default:
+                subject = "إشعار من رواق";
+        }
+
         try {
             emailService.sendEmail(
                     user.getEmail(),
-                    "Riwaq Notification",
+                    subject,
                     message
             );
         } catch (Exception e) {
             System.out.println("Email not sent");
         }
+
         Notification notification = new Notification();
 
         notification.setUserId(user.getId());

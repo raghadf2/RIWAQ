@@ -1,7 +1,7 @@
 package com.example.riwaq.Service;
 
 import com.example.riwaq.Api.ApiException;
-import com.example.riwaq.DTO.In.UserBookDtoIn;
+import com.example.riwaq.DTO.IN.UserBookDtoIn;
 import com.example.riwaq.Model.Book;
 import com.example.riwaq.Model.User;
 import com.example.riwaq.Model.UserBook;
@@ -11,6 +11,7 @@ import com.example.riwaq.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +48,6 @@ public class UserBookService {
         userBook.setBook(book);
         userBook.setCurrentPage(dto.getCurrentPage());
         userBook.setStatus(getStatus(dto.getCurrentPage(), book.getPageCount()));
-
         userBookRepository.save(userBook);
         notificationService.sendBookAddedNotification(
                 user.getId(),
@@ -61,6 +61,7 @@ public class UserBookService {
     public void updateProgress(Integer userBookId, UserBookDtoIn dto) {
 
         UserBook userBook = userBookRepository.findUserBookById(userBookId);
+
         if (userBook == null) {
             throw new ApiException("UserBook not found");
         }
@@ -74,20 +75,21 @@ public class UserBookService {
         userBook.setCurrentPage(dto.getCurrentPage());
         userBook.setStatus(getStatus(dto.getCurrentPage(), book.getPageCount()));
 
-
-        userBookRepository.save(userBook);
-
-        notificationService.sendBookAddedNotification(
-                userBook.getUser().getId(),
-                book.getTitle()
-        );
-        if (dto.getCurrentPage() == book.getPageCount()) {
-            notificationService.sendBookCompletedNotification(  userBook.getUser().getId(),
-                    book.getTitle());
+        if (userBook.getStartedAt() == null && dto.getCurrentPage() > 0) {
+            userBook.setStartedAt(LocalDate.now());
         }
 
-    }
+        if (userBook.getStatus().equals("COMPLETED") && userBook.getFinishedAt() == null) {
+            userBook.setFinishedAt(LocalDate.now());
 
+            notificationService.sendBookCompletedNotification(
+                    userBook.getUser().getId(),
+                    book.getTitle()
+            );
+        }
+
+        userBookRepository.save(userBook);
+    }
     public void deleteUserBook(Integer userBookId) {
 
         UserBook userBook = userBookRepository.findUserBookById(userBookId);

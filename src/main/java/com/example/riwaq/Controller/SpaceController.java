@@ -16,7 +16,7 @@ public class SpaceController {
     private final SpaceService spaceService;
 
     @PostMapping("/add")
-    public ResponseEntity<?> addSpace(@RequestBody @Valid com.example.riwaq.DTO.IN.NotificationDTOIn.SpaceDTOIn dto){
+    public ResponseEntity<?> addSpace(@RequestBody @Valid SpaceDTOIn dto){
         spaceService.addSpace(dto);
         return ResponseEntity.status(200).body(new ApiResponse("Space added successfully"));
     }
@@ -27,7 +27,7 @@ public class SpaceController {
     }
 
     @PutMapping("/update/{spaceId}")
-    public ResponseEntity<?> updateSpace(@PathVariable Integer spaceId, @RequestBody @Valid com.example.riwaq.DTO.IN.NotificationDTOIn.SpaceDTOIn dto){
+    public ResponseEntity<?> updateSpace(@PathVariable Integer spaceId, @RequestBody @Valid SpaceDTOIn dto){
         spaceService.updateSpace(spaceId,dto);
         return ResponseEntity.status(200).body(new ApiResponse("Space updated successfully"));
     }
