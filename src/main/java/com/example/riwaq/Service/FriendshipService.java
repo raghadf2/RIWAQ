@@ -1,8 +1,8 @@
 package com.example.riwaq.Service;
 
 import com.example.riwaq.Api.ApiException;
-import com.example.riwaq.DTO.In.FriendshipDTOIn;
-import com.example.riwaq.DTO.Out.FriendshipDTOOut;
+import com.example.riwaq.DTO.IN.FriendshipDTOIn;
+import com.example.riwaq.DTO.OUT.FriendshipDTOOut;
 import com.example.riwaq.Model.Friendship;
 import com.example.riwaq.Repository.FriendshipRepository;
 import lombok.RequiredArgsConstructor;

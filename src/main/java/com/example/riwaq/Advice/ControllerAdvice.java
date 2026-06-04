@@ -19,47 +19,56 @@ import java.sql.SQLIntegrityConstraintViolationException;
 public class ControllerAdvice {
 
     @ExceptionHandler(value = ApiException.class)
-    public ResponseEntity<ApiResponse> ApiException(ApiException e){
-        return ResponseEntity.status(400).body(new ApiResponse(e.getMessage()));
-    }
-
-    @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse> MethodArgumentNotValidException(MethodArgumentNotValidException e){
-        return ResponseEntity.status(400).body(new ApiResponse(e.getFieldError().getDefaultMessage()));
-    }
-
-    @ExceptionHandler(value = ConstraintViolationException.class)
-    public ResponseEntity<ApiResponse> ConstraintViolationException(ConstraintViolationException e){
-        return ResponseEntity.status(400).body(new ApiResponse(e.getMessage()));
+    public ResponseEntity<?> ApiException(ApiException apiException) {
+        String message = apiException.getMessage();
+        return ResponseEntity.status(400).body(new ApiResponse(message));
     }
 
     @ExceptionHandler(value = SQLIntegrityConstraintViolationException.class)
-    public ResponseEntity<ApiResponse> SQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException e){
-        return ResponseEntity.status(400).body(new ApiResponse(e.getMessage()));
-    }
-
-    @ExceptionHandler(value = InvalidDataAccessResourceUsageException.class)
-    public ResponseEntity<ApiResponse> InvalidDataAccessResourceUsageException(InvalidDataAccessResourceUsageException e){
-        return ResponseEntity.status(400).body(new ApiResponse(e.getMessage()));
-    }
-
-    @ExceptionHandler(value = DataIntegrityViolationException.class)
-    public ResponseEntity<ApiResponse> DataIntegrityViolationException(DataIntegrityViolationException e){
-        return ResponseEntity.status(400).body(new ApiResponse(e.getMessage()));
-    }
-
-    @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<ApiResponse> HttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e){
-        return ResponseEntity.status(400).body(new ApiResponse(e.getMessage()));
+    public ResponseEntity<ApiResponse> SQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException e) {
+        String message = e.getMessage();
+        return ResponseEntity.status(400).body(new ApiResponse(message));
     }
 
     @ExceptionHandler(value = HttpMessageNotReadableException.class)
-    public ResponseEntity<ApiResponse> HttpMessageNotReadableException(HttpMessageNotReadableException e){
-        return ResponseEntity.status(400).body(new ApiResponse(e.getMessage()));
+    public ResponseEntity<ApiResponse> HttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        String message = e.getMessage();
+        return ResponseEntity.status(400).body(new ApiResponse(message));
+    }
+
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse> MethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        String msg = e.getFieldError().getDefaultMessage();
+        return ResponseEntity.status(400).body(new ApiResponse(msg));
+    }
+
+    @ExceptionHandler(value = ConstraintViolationException.class)
+    public ResponseEntity<ApiResponse> ConstraintViolationException(ConstraintViolationException e) {
+        String msg = e.getMessage();
+        return ResponseEntity.status(400).body(new ApiResponse(msg));
+    }
+
+    @ExceptionHandler(value = InvalidDataAccessResourceUsageException.class)
+    public ResponseEntity<ApiResponse> InvalidDataAccessResourceUsageException(InvalidDataAccessResourceUsageException e) {
+        String msg = e.getMessage();
+        return ResponseEntity.status(200).body(new ApiResponse(msg));
+    }
+
+    @ExceptionHandler(value = DataIntegrityViolationException.class)
+    public ResponseEntity<ApiResponse> DataIntegrityViolationException(DataIntegrityViolationException e) {
+        String msg = e.getMessage();
+        return ResponseEntity.status(400).body(new ApiResponse(msg));
+    }
+
+    @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ApiResponse> HttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
+        String msg = e.getMessage();
+        return ResponseEntity.status(400).body(new ApiResponse(msg));
     }
 
     @ExceptionHandler(value = MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ApiResponse> MethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e){
-        return ResponseEntity.status(400).body(new ApiResponse(e.getMessage()));
+    public ResponseEntity<ApiResponse> MethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+        String msg = e.getMessage();
+        return ResponseEntity.status(400).body(new ApiResponse(msg));
     }
 }

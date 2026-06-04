@@ -1,8 +1,8 @@
 package com.example.riwaq.Service;
 
 import com.example.riwaq.Api.ApiException;
-import com.example.riwaq.DTO.In.PostLikeDTOIn;
-import com.example.riwaq.DTO.Out.PostLikeDTOOut;
+import com.example.riwaq.DTO.IN.PostLikeDTOIn;
+import com.example.riwaq.DTO.OUT.PostLikeDTOOut;
 import com.example.riwaq.Model.PostLike;
 import com.example.riwaq.Repository.PostLikeRepository;
 import lombok.RequiredArgsConstructor;

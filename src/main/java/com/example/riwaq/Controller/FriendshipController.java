@@ -1,6 +1,6 @@
 package com.example.riwaq.Controller;
 
-import com.example.riwaq.DTO.In.FriendshipDTOIn;
+import com.example.riwaq.DTO.IN.FriendshipDTOIn;
 import com.example.riwaq.Service.FriendshipService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

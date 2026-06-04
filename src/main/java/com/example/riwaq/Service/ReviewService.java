@@ -1,8 +1,8 @@
 package com.example.riwaq.Service;
 
 import com.example.riwaq.Api.ApiException;
-import com.example.riwaq.DTO.In.ReviewDTOIn;
-import com.example.riwaq.DTO.Out.ReviewDTOOut;
+import com.example.riwaq.DTO.IN.ReviewDTOIn;
+import com.example.riwaq.DTO.OUT.ReviewDTOOut;
 import com.example.riwaq.Model.Review;
 import com.example.riwaq.Repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;

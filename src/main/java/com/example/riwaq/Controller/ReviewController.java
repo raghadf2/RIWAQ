@@ -1,6 +1,6 @@
 package com.example.riwaq.Controller;
 
-import com.example.riwaq.DTO.In.ReviewDTOIn;
+import com.example.riwaq.DTO.IN.ReviewDTOIn;
 import com.example.riwaq.Service.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
