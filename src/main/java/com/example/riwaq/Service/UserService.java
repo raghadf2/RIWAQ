@@ -15,6 +15,7 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     public void addUser(UserDtoIn dto) {
 
@@ -26,6 +27,8 @@ public class UserService {
         user.setPhoneNumber(dto.getPhoneNumber());
 
         userRepository.save(user);
+
+        notificationService.sendWelcomeNotification(user.getId());
     }
 
     public List<User> getAllUsers() {
@@ -58,5 +61,17 @@ public class UserService {
         }
 
         userRepository.delete(user);
+    }
+
+    // endpoint
+    public User getUserByUsername(String username){
+
+        User user = userRepository.findUserByUsername(username);
+
+        if(user == null){
+            throw new ApiException("User not found");
+        }
+
+        return user;
     }
 }

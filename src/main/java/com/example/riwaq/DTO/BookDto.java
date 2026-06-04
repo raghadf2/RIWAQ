@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class BookDto {
 
     @NotEmpty(message = "title is required")
-    @Size(min = 2, max = 20, message = "title must be between 2 and 20 characters")
+    @Size(min = 2, max = 100, message = "title must be between 2 and 100 characters")
     private String title;
 
     @NotEmpty(message = "author is required")

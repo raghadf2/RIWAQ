@@ -24,20 +24,19 @@ public class Post {
 
     private Integer pageNumber;
 
-    @NotNull
-    private Integer userId;
+//    private Integer userId;
     //@NotNull : i think making book added optional is better
-    private Integer userBookId;
+//    private Integer userBookId;
 
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
-//     @ManyToOne
-//     @JoinColumn(name = "user_id", insertable = false, updatable = false)
-//     private User user;
-//
-//     @ManyToOne
-//     @JoinColumn(name = "user_book_id", insertable = false, updatable = false)
-//     private UserBook userBook;
+     @ManyToOne
+     @JoinColumn(name = "user_id", insertable = false, updatable = false)
+     private User user;
+
+     @ManyToOne
+     @JoinColumn(name = "user_book_id", insertable = false, updatable = false)
+     private UserBook userBook;
 }

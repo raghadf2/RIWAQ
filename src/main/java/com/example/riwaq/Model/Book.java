@@ -22,7 +22,8 @@ public class Book {
     @Column(nullable = false)
     private Integer pageCount;
     private Integer createdByUserId;
-
+    @Column(nullable = false)
+    private String source; // USER_CREATED or GOOGLE_BOOK
     @JsonIgnore
     @OneToMany(mappedBy = "book")
     private Set<UserBook> userBooks;

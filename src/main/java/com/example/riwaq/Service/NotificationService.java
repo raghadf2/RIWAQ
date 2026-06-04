@@ -1,78 +1,106 @@
 package com.example.riwaq.Service;
 
 import com.example.riwaq.Api.ApiException;
-import com.example.riwaq.DTO.IN.NotificationDTOIn;
-import com.example.riwaq.DTO.OUT.NotificationDTOOut;
+
 import com.example.riwaq.Model.Notification;
+import com.example.riwaq.Model.User;
 import com.example.riwaq.Repository.NotificationRepository;
+import com.example.riwaq.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
+    private final UserRepository userRepository;
+    private final EmailService emailService;
 
-    public List<NotificationDTOOut> getAllNotifications() {
-        return notificationRepository.findAll()
-                .stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+    public List<Notification> getAllNotifications() {
+        return notificationRepository.findAll();
     }
 
-    public NotificationDTOOut getNotificationById(Integer id) {
-        Notification notification = notificationRepository.findNotificationById(id);
-        if (notification == null) {
-            throw new ApiException("Notification not found");
+    public List<Notification> getNotificationsByUserId(Integer userId) {
+
+        User user = userRepository.findUserById(userId);
+
+        if (user == null) {
+            throw new ApiException("User not found");
         }
-        return convertToDTO(notification);
+
+        List<Notification> notifications =
+                notificationRepository.findNotificationsByUserId(userId);
+
+        if (notifications.isEmpty()) {
+            throw new ApiException("No notifications found");
+        }
+
+        return notifications;
     }
 
-    public void addNotification(NotificationDTOIn dto) {
+    public void sendWelcomeNotification(Integer userId) {
+
+        String message =
+//                "Welcome to Riwaq 📚 Start your reading journey today."
+                "مرحبًا بك في رواق 📚، ابدأ رحلتك القرائية اليوم."  ;
+
+        sendNotification(userId,
+                "WELCOME",
+                message);
+    }
+
+    public void sendBookAddedNotification(Integer userId,
+                                          String bookTitle) {
+
+        String message =
+//                bookTitle + " has been added to your reading list."
+                "تمت إضافة كتاب " + bookTitle + " إلى قائمة قراءاتك." ;
+
+        sendNotification(userId,
+                "BOOK_ADDED",
+                message);
+    }
+
+    public void sendBookCompletedNotification(Integer userId,
+                                              String bookTitle) {
+
+        String message =
+//                "Congratulations! You completed "
+//                        + bookTitle
+//                        + ". Keep reading and discover your next favorite book."
+        "أحسنت! لقد أنهيت قراءة كتاب " + bookTitle + ". استمر في رحلتك القرائية.";
+
+        sendNotification(userId,
+                "BOOK_COMPLETED",
+                message);
+    }
+
+    private void sendNotification(Integer userId,
+                                  String type,
+                                  String message) {
+
+        User user = userRepository.findUserById(userId);
+
+        if (user == null) {
+            throw new ApiException("User not found");
+        }
+        try {
+            emailService.sendEmail(
+                    user.getEmail(),
+                    "Riwaq Notification",
+                    message
+            );
+        } catch (Exception e) {
+            System.out.println("Email not sent");
+        }
         Notification notification = new Notification();
-        notification.setMessage(dto.getMessage());
-        notification.setType(dto.getType());
-        notification.setReferenceId(dto.getReferenceId());
-        notification.setRecipientId(dto.getRecipientId());
-        notification.setSenderId(dto.getSenderId());
+
+        notification.setUserId(user.getId());
+        notification.setType(type);
+        notification.setMessage(message);
+
         notificationRepository.save(notification);
-    }
-
-    public void updateNotification(Integer id, NotificationDTOIn dto) {
-        Notification notification = notificationRepository.findNotificationById(id);
-        if (notification == null) {
-            throw new ApiException("Notification not found");
-        }
-        notification.setMessage(dto.getMessage());
-        notification.setType(dto.getType());
-        notification.setReferenceId(dto.getReferenceId());
-        notification.setRecipientId(dto.getRecipientId());
-        notification.setSenderId(dto.getSenderId());
-        notificationRepository.save(notification);
-    }
-
-    public void deleteNotification(Integer id) {
-        Notification notification = notificationRepository.findNotificationById(id);
-        if (notification == null) {
-            throw new ApiException("Notification not found");
-        }
-        notificationRepository.delete(notification);
-    }
-
-    private NotificationDTOOut convertToDTO(Notification notification) {
-        return new NotificationDTOOut(
-                notification.getId(),
-                notification.getMessage(),
-                notification.getStatus(),
-                notification.getType(),
-                notification.getReferenceId(),
-                notification.getCreatedAt(),
-                notification.getRecipientId(),
-                notification.getSenderId()
-        );
     }
 }

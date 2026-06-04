@@ -7,7 +7,10 @@ import java.util.List;
 
 public interface UserBookRepository extends JpaRepository<UserBook, Integer> {
 
-    List<UserBook> findAllByUserId(Integer userId);
     UserBook findUserBookById(Integer id);
+    List<UserBook> findUserBooksByUser_Id(Integer userId);
 
-}
+    List<UserBook> findUserBooksByUser_IdAndStatus(
+            Integer userId,
+            String status
+    );}

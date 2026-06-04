@@ -37,4 +37,11 @@ public class UserController {
         userService.deleteUser(userId);
         return ResponseEntity.status(200).body("User deleted successfully");
     }
+    //
+    @GetMapping("/username/{username}")
+    public ResponseEntity getUserByUsername(@PathVariable String username){
+
+        return ResponseEntity.status(200)
+                .body(userService.getUserByUsername(username));
+    }
 }

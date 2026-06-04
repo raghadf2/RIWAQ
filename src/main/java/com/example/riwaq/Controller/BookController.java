@@ -38,4 +38,37 @@ public class BookController {
         bookService.deleteBook(bookId);
         return ResponseEntity.status(200).body("Book deleted successfully");
     }
+
+    //
+    @GetMapping("/user/{userId}")
+    public ResponseEntity getBooksByUserId(@PathVariable Integer userId){
+
+        return ResponseEntity.status(200)
+                .body(bookService.getBooksByUserId(userId));
+    }
+
+    @GetMapping("/author/{author}")
+    public ResponseEntity getBooksByAuthor(@PathVariable String author){
+
+        return ResponseEntity.status(200)
+                .body(bookService.getBooksByAuthor(author));
+    }
+    @PostMapping("/add-google/{userId}")
+    public ResponseEntity addBookFromGoogle(@PathVariable Integer userId,
+                                            @RequestParam String title) {
+
+        bookService.addBookFromGoogle(userId, title);
+
+        return ResponseEntity.status(201)
+                .body("Book added from Google successfully");
+    }
+
+    @GetMapping("/dashboard/{bookId}")
+    public ResponseEntity getBookDashboard(@PathVariable Integer bookId){
+
+        return ResponseEntity.status(200)
+                .body(bookService.getBookDashboard(bookId));
+    }
+
+
 }

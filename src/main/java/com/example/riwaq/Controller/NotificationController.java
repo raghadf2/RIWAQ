@@ -19,21 +19,21 @@ public class NotificationController {
     public ResponseEntity<?> getAllNotifications() {
         return ResponseEntity.ok(notificationService.getAllNotifications());
     }
-
-    @GetMapping("/get/{id}")
-    public ResponseEntity<?> getNotificationById(@PathVariable Integer id) {
-        return ResponseEntity.ok(notificationService.getNotificationById(id));
-    }
-
-    @PostMapping("/add")
-    public ResponseEntity<?> addNotification(@RequestBody @Valid NotificationDTOIn dto) {
-        notificationService.addNotification(dto);
-        return ResponseEntity.ok(new ApiResponse("Notification created successfully"));
-    }
-
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteNotification(@PathVariable Integer id) {
-        notificationService.deleteNotification(id);
-        return ResponseEntity.ok(new ApiResponse("Notification deleted successfully"));
-    }
+//
+//    @GetMapping("/get/{id}")
+//    public ResponseEntity<?> getNotificationById(@PathVariable Integer id) {
+//        return ResponseEntity.ok(notificationService.getNotificationById(id));
+//    }
+//
+//    @PostMapping("/add")
+//    public ResponseEntity<?> addNotification(@RequestBody @Valid NotificationDTOIn dto) {
+//        notificationService.addNotification(dto);
+//        return ResponseEntity.ok(new ApiResponse("Notification created successfully"));
+//    }
+//
+//    @DeleteMapping("/delete/{id}")
+//    public ResponseEntity<?> deleteNotification(@PathVariable Integer id) {
+//        notificationService.deleteNotification(id);
+//        return ResponseEntity.ok(new ApiResponse("Notification deleted successfully"));
+//    }
 }

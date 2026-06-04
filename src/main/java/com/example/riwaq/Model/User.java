@@ -31,7 +31,7 @@ public class User {
     private Set<UserBook> userBooks;
 
     @JsonIgnore
-    @OneToMany
+    @OneToMany(mappedBy = "user")
     private Set<Review> reviews;
 
 

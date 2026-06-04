@@ -1,7 +1,9 @@
 package com.example.riwaq.Controller;
 
 import com.example.riwaq.DTO.In.UserBookDtoIn;
+import com.example.riwaq.Repository.UserBookRepository;
 import com.example.riwaq.Service.UserBookService;
+import com.example.riwaq.Service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserBookController {
 
     private final UserBookService userBookService;
-
     @PostMapping("/add/{userId}/{bookId}")
     public ResponseEntity addUserBook(@PathVariable Integer userId,
                                       @PathVariable Integer bookId,
@@ -39,4 +40,21 @@ public class UserBookController {
         userBookService.deleteUserBook(userBookId);
         return ResponseEntity.status(200).body("User book deleted successfully");
     }
+    //
+    @GetMapping("/status/{userId}/{status}")
+    public ResponseEntity getBooksByStatus(
+            @PathVariable Integer userId,
+            @PathVariable String status){
+
+        return ResponseEntity.status(200)
+                .body(userBookService.getBooksByStatus(userId,status));
+    }
+
+    @GetMapping("/dashboard/{userId}")
+    public ResponseEntity getDashboard(@PathVariable Integer userId){
+
+        return ResponseEntity.status(200)
+                .body(userBookService.getDashboard(userId));
+    }
+
 }
