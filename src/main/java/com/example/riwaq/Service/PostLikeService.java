@@ -1,7 +1,6 @@
 package com.example.riwaq.Service;
 
 import com.example.riwaq.Api.ApiException;
-import com.example.riwaq.DTO.IN.PostLikeDTOIn;
 import com.example.riwaq.DTO.OUT.PostLikeDTOOut;
 import com.example.riwaq.Model.Post;
 import com.example.riwaq.Model.PostLike;
@@ -40,22 +39,22 @@ public class PostLikeService {
     }
 
     @Transactional
-    public void addPostLike(PostLikeDTOIn dto) {
-        User user = userRepository.findUserById(dto.getUserId());
+    public void addPostLike(Integer userId, Integer postId) {
+        User user = userRepository.findUserById(userId);
 
         if (user == null) {
             throw new ApiException("User not found");
         }
 
-        Post post = postRepository.findPostById(dto.getPostId());
+        Post post = postRepository.findPostById(postId);
 
         if (post == null) {
             throw new ApiException("Post not found");
         }
 
         PostLike existing = postLikeRepository.findPostLikeByUserIdAndPostId(
-                dto.getUserId(),
-                dto.getPostId()
+                userId,
+                postId
         );
 
         if (existing != null) {
@@ -63,8 +62,8 @@ public class PostLikeService {
         }
 
         PostLike postLike = new PostLike();
-        postLike.setUserId(dto.getUserId());
-        postLike.setPostId(dto.getPostId());
+        postLike.setUserId(userId);
+        postLike.setPostId(postId);
 
         postLikeRepository.save(postLike);
 
@@ -73,13 +72,13 @@ public class PostLikeService {
         postRepository.save(post);
     }
 
-    public void updatePostLike(Integer id, PostLikeDTOIn dto) {
+    public void updatePostLike(Integer id, Integer userId, Integer postId) {
         PostLike postLike = postLikeRepository.findPostLikeById(id);
         if (postLike == null) {
             throw new ApiException("Post like not found");
         }
-        postLike.setUserId(dto.getUserId());
-        postLike.setPostId(dto.getPostId());
+        postLike.setUserId(userId);
+        postLike.setPostId(postId);
         postLikeRepository.save(postLike);
     }
 

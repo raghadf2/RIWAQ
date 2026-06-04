@@ -16,9 +16,6 @@ public class PostDTOIn {
 
     private Integer pageNumber;
 
-    @NotNull(message = "User ID must not be null")
-    private Integer userId;
-
     private Integer userBookId;
 
     @AllArgsConstructor

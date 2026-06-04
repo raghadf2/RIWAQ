@@ -30,21 +30,21 @@ public class PostController {
         return ResponseEntity.ok(postService.getPostsByCurrentPage(userBookId, currentPage));
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<?> addPost(@RequestBody @Valid PostDTOIn dto) {
-        postService.addPost(dto);
+    @PostMapping("/add/{userId}")
+    public ResponseEntity<?> addPost(@PathVariable Integer userId, @RequestBody @Valid PostDTOIn dto) {
+        postService.addPost(userId, dto);
         return ResponseEntity.status(200).body(new ApiResponse("Post added successfully"));
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<?> updatePost(@PathVariable Integer id, @RequestBody @Valid PostDTOIn dto) {
-        postService.updatePost(id, dto);
-        return ResponseEntity.ok("Post updated successfully");
+    @PutMapping("/update/{id}/{userId}")
+    public ResponseEntity<?> updatePost(@PathVariable Integer id, @PathVariable Integer userId, @RequestBody @Valid PostDTOIn dto) {
+        postService.updatePost(id, userId, dto);
+        return ResponseEntity.status(200).body(new ApiResponse("Post updated successfully"));
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deletePost(@PathVariable Integer id) {
         postService.deletePost(id);
-        return ResponseEntity.ok("Post deleted successfully");
+        return ResponseEntity.status(200).body(new ApiResponse("Post deleted successfully"));
     }
 }

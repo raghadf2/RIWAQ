@@ -53,11 +53,11 @@ public class PostService {
         return posts.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
-    public void addPost(PostDTOIn dto) {
+    public void addPost(Integer userId, PostDTOIn dto) {
         Post post = new Post();
         post.setContent(dto.getContent());
         post.setPageNumber(dto.getPageNumber());
-        User user = userRepository.findUserById(dto.getUserId());
+        User user = userRepository.findUserById(userId);
 
         if (user == null) {
             throw new ApiException("User not found");
@@ -82,7 +82,7 @@ public class PostService {
         postRepository.save(post);
     }
 
-    public void updatePost(Integer id, PostDTOIn dto) {
+    public void updatePost(Integer id, Integer userId, PostDTOIn dto) {
         Post post = postRepository.findPostById(id);
         if (post == null) {
             throw new ApiException("Post not found");
@@ -90,7 +90,7 @@ public class PostService {
         post.setContent(dto.getContent());
         post.setPageNumber(dto.getPageNumber());
 
-        User user = userRepository.findUserById(dto.getUserId());
+        User user = userRepository.findUserById(userId);
 
         if (user == null) {
             throw new ApiException("User not found");

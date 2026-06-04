@@ -58,22 +58,22 @@ public class ReviewService {
         return reviewRepository.findAllByOrderByCreatedAtDesc().stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
-    public void addReview(ReviewDTOIn dto) {
-        User user = userRepository.findUserById(dto.getUserId());
+    public void addReview(Integer userId, Integer bookId, ReviewDTOIn dto) {
+        User user = userRepository.findUserById(userId);
 
         if (user == null) {
             throw new ApiException("User not found");
         }
 
-        Book book = bookRepository.findBookById(dto.getBookId());
+        Book book = bookRepository.findBookById(bookId);
 
         if (book == null) {
             throw new ApiException("Book not found");
         }
 
         Review existingReview = reviewRepository.findReviewByUser_IdAndBook_Id(
-                dto.getUserId(),
-                dto.getBookId()
+                userId,
+                bookId
         );
 
         if (existingReview != null) {

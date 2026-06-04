@@ -1,7 +1,6 @@
 package com.example.riwaq.Service;
 
 import com.example.riwaq.Api.ApiException;
-import com.example.riwaq.DTO.IN.FriendshipDTOIn;
 import com.example.riwaq.DTO.OUT.FriendshipDTOOut;
 import com.example.riwaq.Model.Friendship;
 import com.example.riwaq.Model.User;
@@ -35,26 +34,26 @@ public class FriendshipService {
         return convertToDTO(friendship);
     }
 
-    public void addFriendship(FriendshipDTOIn dto) {
-        User sender = userRepository.findUserById(dto.getSenderId());
+    public void addFriendship(Integer senderId, Integer receiverId) {
+        User sender = userRepository.findUserById(senderId);
 
         if (sender == null) {
             throw new ApiException("Sender not found");
         }
 
-        User receiver = userRepository.findUserById(dto.getReceiverId());
+        User receiver = userRepository.findUserById(receiverId);
 
         if (receiver == null) {
             throw new ApiException("Receiver not found");
         }
 
-        if (dto.getSenderId().equals(dto.getReceiverId())) {
+        if (senderId.equals(receiverId)) {
             throw new ApiException("User cannot send friendship request to themselves");
         }
 
         Friendship existingFriendship = friendshipRepository.findFriendshipBySenderIdAndReceiverId(
-                dto.getSenderId(),
-                dto.getReceiverId()
+                senderId,
+                receiverId
         );
 
         if (existingFriendship != null) {
@@ -62,8 +61,8 @@ public class FriendshipService {
         }
 
         Friendship reverseFriendship = friendshipRepository.findFriendshipBySenderIdAndReceiverId(
-                dto.getReceiverId(),
-                dto.getSenderId()
+                receiverId,
+                senderId
         );
 
         if (reverseFriendship != null) {
@@ -72,30 +71,33 @@ public class FriendshipService {
 
         Friendship friendship = new Friendship();
 
-        friendship.setSenderId(dto.getSenderId());
-        friendship.setReceiverId(dto.getReceiverId());
-
-        if (dto.getStatus() == null) {
-            friendship.setStatus("PENDING");
-        } else {
-            friendship.setStatus(dto.getStatus());
-        }
+        friendship.setSenderId(senderId);
+        friendship.setReceiverId(receiverId);
+        friendship.setStatus("PENDING");
 
         friendshipRepository.save(friendship);
     }
 
-    public void updateFriendship(Integer id, FriendshipDTOIn dto) {
+    public void acceptFriendship(Integer id) {
+        updateFriendshipStatus(id, "ACCEPTED");
+    }
+
+    public void rejectFriendship(Integer id) {
+        updateFriendshipStatus(id, "REJECTED");
+    }
+
+    public void blockFriendship(Integer id) {
+        updateFriendshipStatus(id, "BLOCKED");
+    }
+
+    private void updateFriendshipStatus(Integer id, String status) {
         Friendship friendship = friendshipRepository.findFriendshipById(id);
 
         if (friendship == null) {
             throw new ApiException("Friendship not found");
         }
 
-        if (dto.getStatus() == null) {
-            throw new ApiException("Status is required");
-        }
-
-        friendship.setStatus(dto.getStatus());
+        friendship.setStatus(status);
 
         friendshipRepository.save(friendship);
     }
