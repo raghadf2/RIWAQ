@@ -7,11 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class  ReviewDTOOut {
-    private Integer id;
-    private String content;
-    private Integer rating;
-    private Boolean isEdited;
-    private Integer userId;
+public class TopRatedBookDTOOut {
     private Integer bookId;
+    private String title;
+    private String author;
+    private Double averageRating;
+    private Long reviewCount;
 }

@@ -1,7 +1,6 @@
 package com.example.riwaq.Model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
@@ -27,11 +26,11 @@ public class Friendship {
     @Column(nullable = false)
     private String status = "PENDING";
 
-//     @ManyToOne
-//     @JoinColumn(name = "sender_id", insertable = false, updatable = false)
-//     private User sender;
-//
-//     @ManyToOne
-//     @JoinColumn(name = "receiver_id", insertable = false, updatable = false)
-//     private User receiver;
+    @ManyToOne
+    @JoinColumn(name = "senderId", insertable = false, updatable = false)
+    private User sender;
+
+    @ManyToOne
+    @JoinColumn(name = "receiverId", insertable = false, updatable = false)
+    private User receiver;
 }

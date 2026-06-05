@@ -9,10 +9,12 @@ import java.util.List;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Integer> {
     Post findPostById(Integer id);
-    List<Post> findPostsByUserId(Integer userId);
-    List<Post> findPostsByUserBookId(Integer userBookId);
-    List<Post> findPostsByUserBookIdAndPageNumberLessThanEqual(Integer userBookId, Integer currentPage);
+    List<Post> findPostsByUser_Id(Integer userId);
+    List<Post> findPostsByUserBook_Id(Integer userBookId);
+    List<Post> findPostsByUserBook_IdAndPageNumberLessThanEqual(Integer userBookId, Integer currentPage);
 
     Integer countPostsByUserBook_Book_Id(Integer bookId);
     List<Post> findPostsByUserBook_Book_Id(Integer bookId);
+    List<Post> findPostsByUser_IdInOrderByCreatedAtDesc(List<Integer> userIds);
+    List<Post> findAllByOrderByLikeCounterDesc();
 }

@@ -3,6 +3,7 @@ package com.example.riwaq.Controller;
 import com.example.riwaq.DTO.GoogleBookDto;
 import com.example.riwaq.Service.GoogleBookService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,7 +14,8 @@ public class GoogleBookController {
     private final GoogleBookService googleBookService;
 
     @GetMapping("/search")
-    public GoogleBookDto searchBook(@RequestParam String title) {
-        return googleBookService.searchBook(title);
+    public ResponseEntity searchBook(@RequestParam String title) {
+        return ResponseEntity.ok(googleBookService.searchBook(title));
+//        return googleBookService.searchBook(title);
     }
 }

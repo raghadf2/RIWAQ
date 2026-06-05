@@ -10,8 +10,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-
 @Entity
 @Getter
 @Setter
@@ -48,11 +46,11 @@ public class Review {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-     @ManyToOne
-     @JoinColumn(name = "user_id", insertable = false, updatable = false)
-     private User user;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-     @ManyToOne
-     @JoinColumn(name = "book_id", insertable = false, updatable = false)
-     private Book book;
+    @ManyToOne
+    @JoinColumn(name = "book_id", nullable = false)
+    private Book book;
 }

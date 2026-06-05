@@ -1,5 +1,6 @@
 package com.example.riwaq.Controller;
 
+import com.example.riwaq.Api.ApiResponse;
 import com.example.riwaq.DTO.IN.PostDTOIn;
 import com.example.riwaq.Service.PostService;
 import jakarta.validation.Valid;
@@ -16,7 +17,7 @@ public class PostController {
 
     @GetMapping("/get")
     public ResponseEntity<?> getAllPosts() {
-        return ResponseEntity.ok(postService.getAllPosts());
+        return ResponseEntity.status(200).body(postService.getAllPosts());
     }
 
     @GetMapping("/get/{id}")
@@ -29,21 +30,36 @@ public class PostController {
         return ResponseEntity.ok(postService.getPostsByCurrentPage(userBookId, currentPage));
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<?> addPost(@RequestBody @Valid PostDTOIn dto) {
-        postService.addPost(dto);
-        return ResponseEntity.ok("Post added successfully");
+    @GetMapping("/book/{bookId}")
+    public ResponseEntity<?> getPostsByBookId(@PathVariable Integer bookId) {
+        return ResponseEntity.ok(postService.getPostsByBookId(bookId));
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<?> updatePost(@PathVariable Integer id, @RequestBody @Valid PostDTOIn dto) {
-        postService.updatePost(id, dto);
-        return ResponseEntity.ok("Post updated successfully");
+    @GetMapping("/friends/{userId}")
+    public ResponseEntity<?> getPostsFromFriends(@PathVariable Integer userId) {
+        return ResponseEntity.ok(postService.getPostsFromFriends(userId));
+    }
+
+    @GetMapping("/filter/most-liked")
+    public ResponseEntity<?> getMostLikedPosts() {
+        return ResponseEntity.ok(postService.getMostLikedPosts());
+    }
+
+    @PostMapping("/add/{userId}")
+    public ResponseEntity<?> addPost(@PathVariable Integer userId, @RequestBody @Valid PostDTOIn dto) {
+        postService.addPost(userId, dto);
+        return ResponseEntity.status(200).body(new ApiResponse("Post added successfully"));
+    }
+
+    @PutMapping("/update/{id}/{userId}")
+    public ResponseEntity<?> updatePost(@PathVariable Integer id, @PathVariable Integer userId, @RequestBody @Valid PostDTOIn dto) {
+        postService.updatePost(id, userId, dto);
+        return ResponseEntity.status(200).body(new ApiResponse("Post updated successfully"));
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deletePost(@PathVariable Integer id) {
         postService.deletePost(id);
-        return ResponseEntity.ok("Post deleted successfully");
+        return ResponseEntity.status(200).body(new ApiResponse("Post deleted successfully"));
     }
 }

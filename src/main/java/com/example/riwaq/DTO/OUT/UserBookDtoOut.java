@@ -19,6 +19,7 @@ public class UserBookDtoOut {
         private String status;
         private LocalDate startedAt;
         private LocalDate finishedAt;
+        private Integer progressPercentage;
     }
 
 

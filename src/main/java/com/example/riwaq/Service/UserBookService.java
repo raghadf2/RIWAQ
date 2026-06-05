@@ -34,6 +34,18 @@ public class UserBookService {
             throw new ApiException("User not found");
         }
 
+        UserBook existingUserBook =
+                userBookRepository.findUserBookByUser_IdAndBook_Id(
+                        userId,
+                        bookId
+                );
+        // Check if the user already added this book before.
+        // this prevents duplicate books in the user's reading list.
+        if (existingUserBook != null) {
+            throw new ApiException(
+                    "This book is already in the user's reading list"
+            );
+        }
         Book book = bookRepository.findBookById(bookId);
         if (book == null) {
             throw new ApiException("Book not found");
@@ -81,12 +93,26 @@ public class UserBookService {
 
         if (userBook.getStatus().equals("COMPLETED") && userBook.getFinishedAt() == null) {
             userBook.setFinishedAt(LocalDate.now());
-
+            userBook.setProgressPercentage(100);
             notificationService.sendBookCompletedNotification(
                     userBook.getUser().getId(),
                     book.getTitle()
             );
+            List<String> similarBooks = getSimilarBookTitles(book);
+
+            notificationService.sendSimilarBooksNotification(
+                    userBook.getUser().getId(),
+                    book.getTitle(),
+                    similarBooks
+            );
         }
+
+
+        Integer progress =
+                (dto.getCurrentPage() * 100)
+                        / book.getPageCount();
+
+        userBook.setProgressPercentage(progress);
 
         userBookRepository.save(userBook);
     }
@@ -146,6 +172,11 @@ public class UserBookService {
         long longestDays = 0;
         String longestBook = "No completed books yet";
 
+        int totalProgress = 0;
+        int almostCompletedBooks = 0;
+        int highestProgress = 0;
+        String highestProgressBook = "No books yet";
+
         for(UserBook userBook : userBooks){
 
             if(userBook.getStatus().equals("COMPLETED")){
@@ -172,6 +203,27 @@ public class UserBookService {
                     longestBook = userBook.getBook().getTitle();
                 }
             }
+            Integer progress = userBook.getProgressPercentage();
+
+            if(progress == null){
+                progress = 0;
+            }
+
+            totalProgress += progress;
+
+            if(progress >= 80 && progress < 100){
+                almostCompletedBooks++;
+            }
+
+            if(progress > highestProgress){
+                highestProgress = progress;
+                highestProgressBook = userBook.getBook().getTitle();
+            }
+        }
+        int averageProgress = 0;
+
+        if(!userBooks.isEmpty()){
+            averageProgress = totalProgress / userBooks.size();
         }
 
 //        String prompt =
@@ -201,6 +253,10 @@ public class UserBookService {
                         + " لمدة "
                         + longestDays
                         + " يومًا. "
+                        + ", متوسط التقدم = " + averageProgress + "%"
+                        + ", عدد الكتب القريبة من الانتهاء = " + almostCompletedBooks
+                        + ", أكثر كتاب متقدم فيه القارئ = " + highestProgressBook
+                        + " بنسبة " + highestProgress + "%. "
                         + "اكتب وصفًا قصيرًا للقارئ ونصيحة واحدة لتحسين عاداته القرائية.";
 
         Map<String, String> aiAnalysis =
@@ -215,7 +271,65 @@ public class UserBookService {
         response.put("longestBook", longestBook);
         response.put("longestDays", longestDays);
         response.put("aiAnalysis", aiAnalysis);
+        response.put("almostCompletedBooks", almostCompletedBooks);
+        response.put("averageProgress", averageProgress+ " %");
+        response.put("highestProgressBook", highestProgressBook);
+        response.put("highestProgress", highestProgress + " %");
+
 
         return response;
+    }
+    public List<UserBook> getBooksBetweenDates(LocalDate date1, LocalDate date2){
+        List<UserBook> books =
+                userBookRepository.findByStartedAtBetween(
+                        date1,
+                        date2
+                );
+
+        if(books.isEmpty()){
+            throw new ApiException("No books found in this date range");
+        }
+
+        return books;
+    }
+
+    private List<String> getSimilarBookTitles(Book book) {
+
+        String prompt =
+                "أنت مستشار كتب عربي. "
+                        + "اقترح 5 كتب مشابهة لهذا الكتاب. "
+                        + "أعد JSON صحيح فقط بهذا الشكل: "
+                        + "{ \"similarBooks\":\"\" }. "
+                        + "داخل similarBooks اكتب أسماء الكتب فقط بالعربي. "
+                        + "كل كتاب في سطر مستقل. "
+                        + "استخدم \\n بين كل كتاب والذي يليه. "
+                        + "لا تكتب المؤلف ولا سبب التشابه. "
+                        + "لا تضف markdown ولا ```json. "
+                        + "بيانات الكتاب: "
+                        + "العنوان = " + book.getTitle()
+                        + ", المؤلف = " + book.getAuthor()
+                        + ".";
+        Map<String, String> aiResponse =
+                openAIService.generateJsonAnalysis(prompt);
+
+        String suggestions = aiResponse.get("similarBooks");
+
+        return List.of(suggestions.split("\n"));
+    }
+    public List<UserBook> getAlmostCompletedBooks(Integer userId){
+
+        List<UserBook> books =
+                userBookRepository
+                        .findUserBooksByUser_IdAndProgressPercentageGreaterThanEqualAndProgressPercentageLessThan(
+                                userId,
+                                80,
+                                100
+                        );
+
+        if(books.isEmpty()){
+            throw new ApiException("No almost completed books found");
+        }
+
+        return books;
     }
 }

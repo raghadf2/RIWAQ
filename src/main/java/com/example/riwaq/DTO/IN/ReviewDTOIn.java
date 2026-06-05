@@ -20,10 +20,4 @@ public class ReviewDTOIn {
     @Min(value = 1, message = "Rating must be at least 1")
     @Max(value = 5, message = "Rating must be at most 5")
     private Integer rating;
-
-//    @NotNull(message = "User ID must not be null")
-//    private Integer userId;
-//
-//    @NotNull(message = "Book ID must not be null")
-//    private Integer bookId;
 }

@@ -4,6 +4,7 @@ import com.example.riwaq.Api.ApiException;
 import com.example.riwaq.DTO.BookDto;
 //import com.example.riwaq.DTO.GoogleBookDto;
 import com.example.riwaq.DTO.GoogleBookDto;
+import com.example.riwaq.DTO.OUT.TopRatedBookDTOOut;
 import com.example.riwaq.Model.Book;
 import com.example.riwaq.Model.Post;
 import com.example.riwaq.Model.User;
@@ -125,6 +126,17 @@ public class BookService {
 
         return books;
     }
+
+    public List<TopRatedBookDTOOut> getTopRatedBooks() {
+        List<TopRatedBookDTOOut> books = reviewRepository.findTopRatedBooks();
+
+        if (books.isEmpty()) {
+            throw new ApiException("No reviewed books found");
+        }
+
+        return books;
+    }
+
     public Map<String, Object> getBookDashboard(Integer bookId){
 
         Book book = bookRepository.findBookById(bookId);
@@ -202,6 +214,46 @@ public class BookService {
         response.put("postsCount", postsCount);
         response.put("mostPostedPage", mostPostedPage);
         response.put("aiAnalysis", aiAnalysis);
+
+        return response;
+    }
+
+    public Map<String, Object> getSimilarBooks(Integer bookId) {
+
+        Book book = bookRepository.findBookById(bookId);
+
+        if (book == null) {
+            throw new ApiException("Book not found");
+        }
+
+        String prompt =
+                "أنت مستشار كتب عربي. "
+                        + "اقترح 5 كتب مشابهة لهذا الكتاب. "
+                        + "أعد JSON صحيح فقط بهذا الشكل: "
+                        + "{ \"similarBooks\":\"\" }. "
+                        + "داخل similarBooks اكتب كل كتاب في سطر مستقل بهذا الشكل: "
+                        + "اسم الكتاب - المؤلف - سبب التشابه. "
+                        + "استخدم \\n بين كل كتاب والذي يليه. "
+                        + "لا تستخدم ترقيم JSON أو Arrays. "
+                        + "لا تضف markdown ولا ```json. "
+                        + "بيانات الكتاب: "
+                        + "العنوان = " + book.getTitle()
+                        + ", المؤلف = " + book.getAuthor()
+                        + ", عدد الصفحات = " + book.getPageCount()
+                        + ".";
+
+        Map<String, String> aiResponse =
+                openAIService.generateJsonAnalysis(prompt);
+
+        Map<String, Object> response = new HashMap<>();
+        String suggestions = aiResponse.get("similarBooks");
+
+        List<String> books = List.of(suggestions.split("\n"));
+
+        response.put("bookId", book.getId());
+        response.put("title", book.getTitle());
+        response.put("author", book.getAuthor());
+        response.put("similarBooks", books);
 
         return response;
     }

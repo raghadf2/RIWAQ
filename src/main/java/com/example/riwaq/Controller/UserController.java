@@ -1,5 +1,6 @@
 package com.example.riwaq.Controller;
 
+import com.example.riwaq.Api.ApiResponse;
 import com.example.riwaq.DTO.IN.UserDtoIn;
 import com.example.riwaq.Service.UserService;
 import jakarta.validation.Valid;
@@ -17,7 +18,7 @@ public class UserController {
     @PostMapping("/add")
     public ResponseEntity addUser(@RequestBody @Valid UserDtoIn dto) {
         userService.addUser(dto);
-        return ResponseEntity.status(201).body("User added successfully");
+        return ResponseEntity.status(201).body(new ApiResponse("User added successfully"));
     }
 
     @GetMapping("/get")
@@ -29,13 +30,13 @@ public class UserController {
     public ResponseEntity updateUser(@PathVariable Integer userId,
                                      @RequestBody @Valid UserDtoIn dto) {
         userService.updateUser(userId, dto);
-        return ResponseEntity.status(200).body("User updated successfully");
+        return ResponseEntity.status(200).body(new ApiResponse("User updated successfully"));
     }
 
     @DeleteMapping("/delete/{userId}")
     public ResponseEntity deleteUser(@PathVariable Integer userId) {
         userService.deleteUser(userId);
-        return ResponseEntity.status(200).body("User deleted successfully");
+        return ResponseEntity.status(200).body(new ApiResponse("User deleted successfully"));
     }
     //
     @GetMapping("/username/{username}")

@@ -24,21 +24,25 @@ public class Post {
 
     private Integer pageNumber;
 
-//    private Integer userId;
-    //@NotNull : i think making book added optional is better
-//    private Integer userBookId;
-
     private Integer likeCounter = 0;
+
+    private String summary;
+
+    private String postType;
+
+    private Boolean analysisGenerated = false;
+
+    private LocalDateTime analyzedAt;
 
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
-     @ManyToOne
-     @JoinColumn(name = "user_id", insertable = false, updatable = false)
-     private User user;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-     @ManyToOne
-     @JoinColumn(name = "user_book_id", insertable = false, updatable = false)
-     private UserBook userBook;
+    @ManyToOne
+    @JoinColumn(name = "user_book_id")
+    private UserBook userBook;
 }
