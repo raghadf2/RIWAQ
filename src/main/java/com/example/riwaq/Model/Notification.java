@@ -27,6 +27,11 @@ public class Notification {
     @NotEmpty
     private String message;
 
+
+
+    @NotEmpty
+    @Pattern(
+            regexp = "WELCOME|BOOK_ADDED|BOOK_COMPLETED|SIMILAR_BOOKS|PROGRESS_REMINDER|GENERAL",
     @NotEmpty
     @Pattern(regexp = "UNREAD|READ|DELETED", message = "Status must be UNREAD, READ, or DELETED")
     @Column(nullable = false)

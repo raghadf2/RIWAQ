@@ -25,6 +25,7 @@ public class UserBook {
     private LocalDate finishedAt;
 
     private Integer progressPercentage;
+    private LocalDate lastProgressUpdateAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
