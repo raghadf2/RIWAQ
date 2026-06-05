@@ -218,4 +218,44 @@ public class BookService {
         return response;
     }
 
+    public Map<String, Object> getSimilarBooks(Integer bookId) {
+
+        Book book = bookRepository.findBookById(bookId);
+
+        if (book == null) {
+            throw new ApiException("Book not found");
+        }
+
+        String prompt =
+                "أنت مستشار كتب عربي. "
+                        + "اقترح 5 كتب مشابهة لهذا الكتاب. "
+                        + "أعد JSON صحيح فقط بهذا الشكل: "
+                        + "{ \"similarBooks\":\"\" }. "
+                        + "داخل similarBooks اكتب كل كتاب في سطر مستقل بهذا الشكل: "
+                        + "اسم الكتاب - المؤلف - سبب التشابه. "
+                        + "استخدم \\n بين كل كتاب والذي يليه. "
+                        + "لا تستخدم ترقيم JSON أو Arrays. "
+                        + "لا تضف markdown ولا ```json. "
+                        + "بيانات الكتاب: "
+                        + "العنوان = " + book.getTitle()
+                        + ", المؤلف = " + book.getAuthor()
+                        + ", عدد الصفحات = " + book.getPageCount()
+                        + ".";
+
+        Map<String, String> aiResponse =
+                openAIService.generateJsonAnalysis(prompt);
+
+        Map<String, Object> response = new HashMap<>();
+        String suggestions = aiResponse.get("similarBooks");
+
+        List<String> books = List.of(suggestions.split("\n"));
+
+        response.put("bookId", book.getId());
+        response.put("title", book.getTitle());
+        response.put("author", book.getAuthor());
+        response.put("similarBooks", books);
+
+        return response;
+    }
+
 }

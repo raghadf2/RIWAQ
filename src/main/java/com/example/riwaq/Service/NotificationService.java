@@ -79,6 +79,27 @@ public class NotificationService {
                 "BOOK_COMPLETED",
                 message);
     }
+    public void sendSimilarBooksNotification(Integer userId,
+                                             String bookTitle,
+                                             List<String> similarBooks) {
+        String booksText = "";
+
+        for (String book : similarBooks) {
+            booksText = booksText + "• " + book.trim() + "\n";
+        }
+
+        String message =
+                "بناءً على آخر كتاب قرأته: "
+                        + bookTitle
+                        + "\n\n🧠📚 مساعد رواق الذكي اختار لك 5 كتب قد تعجبك:\n\n"
+                        + booksText;
+
+        sendNotification(
+                userId,
+                "SIMILAR_BOOKS",
+                message
+        );
+    }
 
     public void sendPostAboutCurrentBookNotification(Integer userId,
                                                      String bookTitle,
@@ -138,10 +159,19 @@ public class NotificationService {
         }
 
         try {
+//            emailService.sendEmail(
+//                    user.getEmail(),
+//                    subject,
+//                    message
+//            String htmlMessage =
+//                    buildEmailTemplate(subject, message);
+            String htmlMessage =
+                    buildEmailTemplate(subject, message.replace("\n", "<br>"));
+
             emailService.sendEmail(
                     user.getEmail(),
                     subject,
-                    message
+                    htmlMessage
             );
         } catch (Exception e) {
             System.out.println("Email not sent");
@@ -156,6 +186,21 @@ public class NotificationService {
         notification.setReferenceType(referenceType);
 
         notificationRepository.save(notification);
+    }
+// Added an email template to improve how notification emails look for users.
+    private String buildEmailTemplate(String title, String message) {
+
+        return """
+            <div dir="rtl" style="font-family: Arial; background-color:#f7f5ef; padding:24px;">
+                <div style="max-width:600px; margin:auto; background-color:white; border-radius:12px; padding:24px;">
+                    <h2 style="color:#5a3e2b;">رواق 📚</h2>
+                    <h3>%s</h3>
+                    <p style="font-size:16px; line-height:1.8;">%s</p>
+                    <hr>
+                    <p style="font-size:13px; color:#888;">هذه رسالة تلقائية من منصة رواق.</p>
+                </div>
+            </div>
+            """.formatted(title, message);
     }
 
     private NotificationDTOOut convertToDTO(Notification notification) {

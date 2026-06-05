@@ -21,6 +21,11 @@ public class UserService {
     public void addUser(UserDtoIn dto) {
 
         User user = new User();
+        for(User u : userRepository.findAll()){
+            if( dto.getUsername().equals(u.getUsername()) ){
+                throw new ApiException("user name already exists");
+            }
+        }
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
         user.setPassword(dto.getPassword());

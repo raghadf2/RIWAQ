@@ -34,7 +34,7 @@ public class Notification {
 
     @NotEmpty
     @Pattern(
-            regexp = "WELCOME|BOOK_ADDED|BOOK_COMPLETED|POST_ABOUT_CURRENT_BOOK|GENERAL",
+            regexp = "WELCOME|BOOK_ADDED|BOOK_COMPLETED|SIMILAR_BOOKS|POST_ABOUT_CURRENT_BOOK|GENERAL",
             message = "Invalid notification type"
     )     @Column(nullable = false)
     private String type;

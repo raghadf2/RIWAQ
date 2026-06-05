@@ -1,5 +1,6 @@
 package com.example.riwaq.Controller;
 
+import com.example.riwaq.Api.ApiResponse;
 import com.example.riwaq.DTO.BookDto;
 import com.example.riwaq.Service.BookService;
 import jakarta.validation.Valid;
@@ -18,7 +19,7 @@ public class BookController {
     public ResponseEntity addBook(@PathVariable Integer userId,
                                   @RequestBody @Valid BookDto dto) {
         bookService.addBook(userId, dto);
-        return ResponseEntity.status(201).body("Book added successfully");
+        return ResponseEntity.status(201).body(new ApiResponse("Book added successfully"));
     }
 
     @GetMapping("/get")
@@ -30,13 +31,13 @@ public class BookController {
     public ResponseEntity updateBook(@PathVariable Integer bookId,
                                      @RequestBody @Valid BookDto dto) {
         bookService.updateBook(bookId, dto);
-        return ResponseEntity.status(200).body("Book updated successfully");
+        return ResponseEntity.status(200).body(new ApiResponse("Book updated successfully"));
     }
 
     @DeleteMapping("/delete/{bookId}")
     public ResponseEntity deleteBook(@PathVariable Integer bookId) {
         bookService.deleteBook(bookId);
-        return ResponseEntity.status(200).body("Book deleted successfully");
+        return ResponseEntity.status(200).body(new ApiResponse("Book deleted successfully"));
     }
 
     //
@@ -68,7 +69,7 @@ public class BookController {
         bookService.addBookFromGoogle(userId, title);
 
         return ResponseEntity.status(201)
-                .body("Book added from Google successfully");
+                .body(new ApiResponse("Book added from Google successfully"));
     }
 
     @GetMapping("/dashboard/{bookId}")
@@ -78,5 +79,10 @@ public class BookController {
                 .body(bookService.getBookDashboard(bookId));
     }
 
+    @GetMapping("/similar/{bookId}")
+    public ResponseEntity getSimilarBooks(@PathVariable Integer bookId) {
 
+        return ResponseEntity.status(200)
+                .body(bookService.getSimilarBooks(bookId));
+    }
 }
