@@ -93,6 +93,24 @@ public class NotificationService {
                 message
         );
     }
+    public void sendProgressReminderNotification(Integer userId,
+                                                 String bookTitle,
+                                                 Integer progressPercentage) {
+
+        String message =
+                "📖 لقد قطعت شوطًا رائعًا في كتاب "
+                        + bookTitle
+                        + " ووصلت إلى "
+                        + progressPercentage
+                        + "%.\n\n"
+                        + "أوشكت على إنهائه، أخبرنا إذا أحرزت تقدمًا جديدًا. نحن نشجعك!";
+
+        sendNotification(
+                userId,
+                "PROGRESS_REMINDER",
+                message
+        );
+    }
 
     private void sendNotification(Integer userId,
                                   String type,
@@ -119,9 +137,14 @@ public class NotificationService {
             case "BOOK_COMPLETED":
                 subject = "تهانينا على إنهاء الكتاب 🎉";
                 break;
-
+            case "SIMILAR_BOOKS":
+                subject = "اقتراحات كتب مشابهة لك 🧠📚";
+                break;
+            case "PROGRESS_REMINDER":
+                subject = "أوشكت على إنهاء كتابك 📖";
+                break;
             default:
-                subject = "إشعار من رواق";
+                subject = "إشعار من رواق 📚";
         }
 
         try {
@@ -140,7 +163,7 @@ public class NotificationService {
                     htmlMessage
             );
         } catch (Exception e) {
-            System.out.println("Email not sent");
+            System.out.println("Email not sent: " + e.getMessage());
         }
 
         Notification notification = new Notification();

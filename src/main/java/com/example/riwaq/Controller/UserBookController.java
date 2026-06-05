@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/user-book")
@@ -79,5 +80,15 @@ public class UserBookController {
                 .body(
                         userBookService.getAlmostCompletedBooks(userId)
                 );
+    }
+
+    @PostMapping("/check-reminders")
+    public ResponseEntity checkReminders() {
+
+        userBookService.sendInactiveReadersReminders();
+
+        return ResponseEntity.status(200).body(
+                Map.of("message", "Reminders checked successfully")
+        );
     }
 }

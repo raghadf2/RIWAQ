@@ -27,19 +27,15 @@ public class Notification {
     @NotEmpty
     private String message;
 
-//    @NotEmpty
-//    @Pattern(regexp = "CREATED|UNREAD|READ|DELETED", message = "Status must be CREATED, UNREAD, READ, or DELETED")
-////    @Column(nullable = false)
-//    private String status;
+
 
     @NotEmpty
     @Pattern(
-            regexp = "WELCOME|BOOK_ADDED|BOOK_COMPLETED|SIMILAR_BOOKS|GENERAL",
+            regexp = "WELCOME|BOOK_ADDED|BOOK_COMPLETED|SIMILAR_BOOKS|PROGRESS_REMINDER|GENERAL",
             message = "Invalid notification type"
     )     @Column(nullable = false)
     private String type;
 
-//    private Integer referenceId;
 
     @CreationTimestamp
     @Column(updatable = false)

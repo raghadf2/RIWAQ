@@ -40,7 +40,7 @@ public class UserBookService {
                         bookId
                 );
         // Check if the user already added this book before.
-        // this prevents duplicate books in the user's reading list.
+        // بحيث ما يتكرر نفس الكتاب عند قائمة اليوزر
         if (existingUserBook != null) {
             throw new ApiException(
                     "This book is already in the user's reading list"
@@ -60,6 +60,20 @@ public class UserBookService {
         userBook.setBook(book);
         userBook.setCurrentPage(dto.getCurrentPage());
         userBook.setStatus(getStatus(dto.getCurrentPage(), book.getPageCount()));
+        Integer progress =
+                (dto.getCurrentPage() * 100) / book.getPageCount();
+
+//        في حال بدأ القراءة من اول ما اضف الكتاب
+        if(dto.getCurrentPage() > 0){
+            userBook.setStartedAt(LocalDate.now());
+        }
+
+        // وهنا لو اضافه وهو اصلا مكتمل
+        if(userBook.getStatus().equals("COMPLETED")){
+            userBook.setFinishedAt(LocalDate.now());
+        }
+        userBook.setProgressPercentage(progress);
+        userBook.setLastProgressUpdateAt(LocalDate.now());
         userBookRepository.save(userBook);
         notificationService.sendBookAddedNotification(
                 user.getId(),
@@ -91,14 +105,23 @@ public class UserBookService {
             userBook.setStartedAt(LocalDate.now());
         }
 
+
+        Integer progress =
+                (dto.getCurrentPage() * 100)
+                        / book.getPageCount();
+
+        userBook.setProgressPercentage(progress);
+
         if (userBook.getStatus().equals("COMPLETED") && userBook.getFinishedAt() == null) {
             userBook.setFinishedAt(LocalDate.now());
-            userBook.setProgressPercentage(100);
+//            userBook.setProgressPercentage(100);
             notificationService.sendBookCompletedNotification(
                     userBook.getUser().getId(),
                     book.getTitle()
             );
+            //to get 5 similar book suggestions based on this completed book.
             List<String> similarBooks = getSimilarBookTitles(book);
+            userBook.setLastProgressUpdateAt(LocalDate.now());
 
             notificationService.sendSimilarBooksNotification(
                     userBook.getUser().getId(),
@@ -107,12 +130,6 @@ public class UserBookService {
             );
         }
 
-
-        Integer progress =
-                (dto.getCurrentPage() * 100)
-                        / book.getPageCount();
-
-        userBook.setProgressPercentage(progress);
 
         userBookRepository.save(userBook);
     }
@@ -162,6 +179,7 @@ public class UserBookService {
     }
 
     public Map<String, Object> getDashboard(Integer userId){
+
         List<UserBook> userBooks =
                 userBookRepository.findUserBooksByUser_Id(userId);
 
@@ -316,6 +334,7 @@ public class UserBookService {
 
         return List.of(suggestions.split("\n"));
     }
+
     public List<UserBook> getAlmostCompletedBooks(Integer userId){
 
         List<UserBook> books =
@@ -331,5 +350,38 @@ public class UserBookService {
         }
 
         return books;
+    }
+    public void sendInactiveReadersReminders() {
+
+        List<UserBook> userBooks =
+                userBookRepository.findAll();
+
+        for (UserBook userBook : userBooks) {
+
+            if (!userBook.getStatus().equals("READING")) {
+                continue;
+            }
+
+            if (userBook.getProgressPercentage() < 70) {
+                continue;
+            }
+
+            if (userBook.getLastProgressUpdateAt() == null) {
+                continue;
+            }
+
+            if (userBook.getLastProgressUpdateAt()
+//                    .plusDays(7)
+                    .plusDays(1)
+                    // يوم عشان اختبرها
+                    .isBefore(LocalDate.now())) {
+
+                notificationService.sendProgressReminderNotification(
+                        userBook.getUser().getId(),
+                        userBook.getBook().getTitle(),
+                        userBook.getProgressPercentage()
+                );
+            }
+        }
     }
 }
