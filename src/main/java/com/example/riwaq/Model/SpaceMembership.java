@@ -30,4 +30,7 @@ public class SpaceMembership {
     @ManyToOne
     @JsonIgnore
     private Space space;
+
+    @ManyToOne
+    private User user;
 }

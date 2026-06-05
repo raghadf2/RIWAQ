@@ -38,4 +38,16 @@ public class User {
      */
 
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private Set<Post> posts;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private Set<Friendship>  friendships;
+
+    @JsonIgnore
+    @OneToMany
+    private Set<SpaceMembership>  spaceMemberships;
+
 }

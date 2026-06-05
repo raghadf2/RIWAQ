@@ -31,4 +31,9 @@ public class Space {
 
     @OneToMany(mappedBy = "space", cascade = CascadeType.ALL)
     private Set<SpaceMembership> memberships;
+
+    @ManyToOne
+    @JoinColumn(name = "book_id", nullable = false)
+    private Book book;
+
 }
