@@ -1,4 +1,4 @@
-package com.example.riwaq.DTO.Out;
+package com.example.riwaq.DTO.OUT;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,6 +19,7 @@ public class UserBookDtoOut {
         private String status;
         private LocalDate startedAt;
         private LocalDate finishedAt;
+        private Integer progressPercentage;
     }
 
 

@@ -1,10 +1,14 @@
 package com.example.riwaq.Service;
 
 import com.example.riwaq.Api.ApiException;
-import com.example.riwaq.DTO.In.ReviewDTOIn;
-import com.example.riwaq.DTO.Out.ReviewDTOOut;
+import com.example.riwaq.DTO.IN.ReviewDTOIn;
+import com.example.riwaq.DTO.OUT.ReviewDTOOut;
+import com.example.riwaq.Model.Book;
 import com.example.riwaq.Model.Review;
+import com.example.riwaq.Model.User;
+import com.example.riwaq.Repository.BookRepository;
 import com.example.riwaq.Repository.ReviewRepository;
+import com.example.riwaq.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +20,8 @@ import java.util.stream.Collectors;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
+    private final UserRepository userRepository;
+    private final BookRepository bookRepository;
 
     public List<ReviewDTOOut> getAllReviews() {
         return reviewRepository.findAll()
@@ -32,12 +38,55 @@ public class ReviewService {
         return convertToDTO(review);
     }
 
-    public void addReview(ReviewDTOIn dto) {
+    public List<ReviewDTOOut> getBestRatedReviews() {
+        List<Review> reviews = reviewRepository.findAllByOrderByRatingDesc();
+        if (reviews.isEmpty()) {
+            throw new ApiException("No reviews found");
+        }
+        return reviews.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    public List<ReviewDTOOut> getLowestRatedReviews() {
+        List<Review> reviews = reviewRepository.findAllByOrderByRatingAsc();
+        if (reviews.isEmpty()) {
+            throw new ApiException("No reviews found");
+        }
+        return reviews.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    public List<ReviewDTOOut> getRecentReviews() {
+        return reviewRepository.findAllByOrderByCreatedAtDesc().stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    public void addReview(Integer userId, Integer bookId, ReviewDTOIn dto) {
+        User user = userRepository.findUserById(userId);
+
+        if (user == null) {
+            throw new ApiException("User not found");
+        }
+
+        Book book = bookRepository.findBookById(bookId);
+
+        if (book == null) {
+            throw new ApiException("Book not found");
+        }
+
+        Review existingReview = reviewRepository.findReviewByUser_IdAndBook_Id(
+                userId,
+                bookId
+        );
+
+        if (existingReview != null) {
+            throw new ApiException("User already reviewed this book");
+        }
+
         Review review = new Review();
+
         review.setContent(dto.getContent());
         review.setRating(dto.getRating());
-//        review.setUserId(dto.getUserId());
-//        review.setBookId(dto.getBookId());
+        review.setUser(user);
+        review.setBook(book);
+
         reviewRepository.save(review);
     }
 
@@ -48,8 +97,8 @@ public class ReviewService {
         }
         review.setContent(dto.getContent());
         review.setRating(dto.getRating());
-//        review.setUserId(dto.getUserId());
-//        review.setBookId(dto.getBookId());
+        review.setIsEdited(true);
+
         reviewRepository.save(review);
     }
 
@@ -66,9 +115,9 @@ public class ReviewService {
                 review.getId(),
                 review.getContent(),
                 review.getRating(),
-                review.getIsEdited()
-//                review.getUserId(),
-//                review.getBookId()
+                review.getIsEdited(),
+                review.getUser().getId(),
+                review.getBook().getId()
         );
     }
 }

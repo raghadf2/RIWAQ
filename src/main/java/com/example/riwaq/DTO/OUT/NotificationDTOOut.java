@@ -1,4 +1,4 @@
-package com.example.riwaq.DTO.Out;
+package com.example.riwaq.DTO.OUT;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,11 +11,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class NotificationDTOOut {
     private Integer id;
+    private Integer userId;
     private String message;
     private String status;
     private String type;
     private Integer referenceId;
+    private String referenceType;
     private LocalDateTime createdAt;
-    private Integer recipientId;
-    private Integer senderId;
+    private Boolean sentByEmail;
+    private Boolean sentByWhatsApp;
 }

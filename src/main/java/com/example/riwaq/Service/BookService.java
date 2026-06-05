@@ -2,7 +2,8 @@ package com.example.riwaq.Service;
 
 import com.example.riwaq.Api.ApiException;
 import com.example.riwaq.DTO.BookDto;
-//import com.example.riwaq.DTO.GoogleBookDto;
+import com.example.riwaq.DTO.GoogleBookDto;
+import com.example.riwaq.DTO.OUT.TopRatedBookDTOOut;
 import com.example.riwaq.Model.Book;
 import com.example.riwaq.Model.Post;
 import com.example.riwaq.Model.User;
@@ -23,10 +24,12 @@ public class BookService {
 
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
-    //private final GoogleBookService googleBookService;
+
+    //
     private final ReviewRepository reviewRepository;
     private final PostRepository postRepository;
     private final OpenAIService openAIService;
+    private final GoogleBookService googleBookService;
 
     public void addBook(Integer userId, BookDto dto) {
 
@@ -75,7 +78,7 @@ public class BookService {
         bookRepository.delete(book);
     }
     // endpoint
-/*
+
     public void addBookFromGoogle(Integer userId, String title){
 
         User user = userRepository.findUserById(userId);
@@ -94,8 +97,6 @@ public class BookService {
         book.setSource("GOOGLE_BOOK");
         bookRepository.save(book);
     }
-
- */
 
     public List<Book> getBooksByAuthor(String author){
 
@@ -124,6 +125,17 @@ public class BookService {
 
         return books;
     }
+
+    public List<TopRatedBookDTOOut> getTopRatedBooks() {
+        List<TopRatedBookDTOOut> books = reviewRepository.findTopRatedBooks();
+
+        if (books.isEmpty()) {
+            throw new ApiException("No reviewed books found");
+        }
+
+        return books;
+    }
+
     public Map<String, Object> getBookDashboard(Integer bookId){
 
         Book book = bookRepository.findBookById(bookId);
@@ -132,13 +144,16 @@ public class BookService {
             throw new ApiException("Book not found");
         }
 
+        // Count how many posts were created about this book.
         Integer postsCount = postRepository.countPostsByUserBook_Book_Id(bookId);
 
+        // all post related to this book
         List<Post> posts = postRepository.findPostsByUserBook_Book_Id(bookId);
 
         Integer mostPostedPage = null;
         Integer maxPosts = 0;
 
+        // هنا نجيب الصفحة اللي عندها اكبر عدد من post
         for(Post post : posts){
 
             Integer page = post.getPageNumber();
@@ -149,6 +164,7 @@ public class BookService {
 
             int count = 0;
 
+            // هنا نحسب عدد البوستات للصفحة
             for(Post p : posts){
                 if(p.getPageNumber() != null && p.getPageNumber().equals(page)){
                     count++;
@@ -201,6 +217,46 @@ public class BookService {
         response.put("postsCount", postsCount);
         response.put("mostPostedPage", mostPostedPage);
         response.put("aiAnalysis", aiAnalysis);
+
+        return response;
+    }
+
+    public Map<String, Object> getSimilarBooks(Integer bookId) {
+
+        Book book = bookRepository.findBookById(bookId);
+
+        if (book == null) {
+            throw new ApiException("Book not found");
+        }
+
+        String prompt =
+                "أنت مستشار كتب عربي. "
+                        + "اقترح 5 كتب مشابهة لهذا الكتاب. "
+                        + "أعد JSON صحيح فقط بهذا الشكل: "
+                        + "{ \"similarBooks\":\"\" }. "
+                        + "داخل similarBooks اكتب كل كتاب في سطر مستقل بهذا الشكل: "
+                        + "اسم الكتاب - المؤلف - سبب التشابه. "
+                        + "استخدم \\n بين كل كتاب والذي يليه. "
+                        + "لا تستخدم ترقيم JSON أو Arrays. "
+                        + "لا تضف markdown ولا ```json. "
+                        + "بيانات الكتاب: "
+                        + "العنوان = " + book.getTitle()
+                        + ", المؤلف = " + book.getAuthor()
+                        + ", عدد الصفحات = " + book.getPageCount()
+                        + ".";
+
+        Map<String, String> aiResponse =
+                openAIService.generateJsonAnalysis(prompt);
+
+        Map<String, Object> response = new HashMap<>();
+        String suggestions = aiResponse.get("similarBooks");
+
+        List<String> books = List.of(suggestions.split("\n"));
+
+        response.put("bookId", book.getId());
+        response.put("title", book.getTitle());
+        response.put("author", book.getAuthor());
+        response.put("similarBooks", books);
 
         return response;
     }

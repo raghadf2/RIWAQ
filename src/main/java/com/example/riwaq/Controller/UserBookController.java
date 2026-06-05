@@ -1,13 +1,15 @@
 package com.example.riwaq.Controller;
 
-import com.example.riwaq.DTO.In.UserBookDtoIn;
-import com.example.riwaq.Repository.UserBookRepository;
+import com.example.riwaq.Api.ApiResponse;
+import com.example.riwaq.DTO.IN.UserBookDtoIn;
 import com.example.riwaq.Service.UserBookService;
-import com.example.riwaq.Service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/user-book")
@@ -20,7 +22,7 @@ public class UserBookController {
                                       @PathVariable Integer bookId,
                                       @RequestBody @Valid UserBookDtoIn dto) {
         userBookService.addUserBook(userId, bookId, dto);
-        return ResponseEntity.status(201).body("User book added successfully");
+        return ResponseEntity.status(201).body(new ApiResponse("User book added successfully"));
     }
 
     @GetMapping("/get")
@@ -32,13 +34,13 @@ public class UserBookController {
     public ResponseEntity updateProgress(@PathVariable Integer userBookId,
                                          @RequestBody @Valid UserBookDtoIn dto) {
         userBookService.updateProgress(userBookId, dto);
-        return ResponseEntity.status(200).body("Reading progress updated successfully");
+        return ResponseEntity.status(200).body(new ApiResponse("Reading progress updated successfully"));
     }
 
     @DeleteMapping("/delete/{userBookId}")
     public ResponseEntity deleteUserBook(@PathVariable Integer userBookId) {
         userBookService.deleteUserBook(userBookId);
-        return ResponseEntity.status(200).body("User book deleted successfully");
+        return ResponseEntity.status(200).body(new ApiResponse("User book deleted successfully"));
     }
     //
     @GetMapping("/status/{userId}/{status}")
@@ -57,4 +59,36 @@ public class UserBookController {
                 .body(userBookService.getDashboard(userId));
     }
 
+    @GetMapping("/between-dates")
+    public ResponseEntity getBooksBetweenDates(
+            @RequestParam LocalDate startDate,
+            @RequestParam LocalDate endDate){
+
+        return ResponseEntity.status(200)
+                .body(
+                        userBookService.getBooksBetweenDates(
+                                startDate,
+                                endDate
+                        )
+                );
+    }
+    @GetMapping("/almost-complete/{userId}")
+    public ResponseEntity getAlmostCompletedBooks(
+            @PathVariable Integer userId){
+
+        return ResponseEntity.status(200)
+                .body(
+                        userBookService.getAlmostCompletedBooks(userId)
+                );
+    }
+
+    @PostMapping("/check-reminders")
+    public ResponseEntity checkReminders() {
+
+        userBookService.sendInactiveReadersReminders();
+
+        return ResponseEntity.status(200).body(
+                Map.of("message", "Reminders checked successfully")
+        );
+    }
 }

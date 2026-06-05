@@ -10,8 +10,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-
 @Entity
 @Getter
 @Setter
@@ -34,25 +32,25 @@ public class Review {
     @Column(nullable = false)
     private Boolean isEdited = false;
 
-    @NotNull
-    private Integer userId;
-
-    @NotNull
-    private Integer bookId;
+//    @NotNull
+//    private Integer userId;
+//
+//    @NotNull
+//    private Integer bookId;
 
     @CreationTimestamp
-    @Column(updatable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp // I have never used this annotation before, I hope it works properly.
-    @Column(updatable = false)
+    @UpdateTimestamp
+    @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-//     @ManyToOne
-//     @JoinColumn(name = "user_id", insertable = false, updatable = false)
-//     private User user;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-//     @ManyToOne
-//     @JoinColumn(name = "book_id", insertable = false, updatable = false)
-//     private Book book;
+    @ManyToOne
+    @JoinColumn(name = "book_id", nullable = false)
+    private Book book;
 }

@@ -1,4 +1,4 @@
-package com.example.riwaq.DTO.In;
+package com.example.riwaq.DTO.IN;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -20,10 +20,4 @@ public class ReviewDTOIn {
     @Min(value = 1, message = "Rating must be at least 1")
     @Max(value = 5, message = "Rating must be at most 5")
     private Integer rating;
-
-//    @NotNull(message = "User ID must not be null")
-//    private Integer userId;
-//
-//    @NotNull(message = "Book ID must not be null")
-//    private Integer bookId;
 }

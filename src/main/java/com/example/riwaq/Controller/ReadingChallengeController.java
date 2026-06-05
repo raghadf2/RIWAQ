@@ -1,7 +1,7 @@
 package com.example.riwaq.Controller;
 
 import com.example.riwaq.Api.ApiResponse;
-import com.example.riwaq.DTO.In.ReadingChallengeDTOIn;
+import com.example.riwaq.DTO.IN.ReadingChallengeDTOIn;
 import com.example.riwaq.Service.ReadingChallengeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

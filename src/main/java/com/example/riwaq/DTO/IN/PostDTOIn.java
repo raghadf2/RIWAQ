@@ -1,4 +1,4 @@
-package com.example.riwaq.DTO.In;
+package com.example.riwaq.DTO.IN;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -15,9 +15,6 @@ public class PostDTOIn {
     private String content;
 
     private Integer pageNumber;
-
-    @NotNull(message = "User ID must not be null")
-    private Integer userId;
 
     private Integer userBookId;
 

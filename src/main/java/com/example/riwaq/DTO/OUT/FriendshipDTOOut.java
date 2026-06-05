@@ -1,4 +1,4 @@
-package com.example.riwaq.DTO.Out;
+package com.example.riwaq.DTO.OUT;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,16 +14,6 @@ public class FriendshipDTOOut {
     private Integer senderId;
     private Integer receiverId;
     private String status;
-
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Data
-    public static class SessionParticipantDTOOut {
-
-        private Integer participantId;
-        private Integer sessionId;
-        private Integer userId;
-    }
 
     @AllArgsConstructor
     @NoArgsConstructor

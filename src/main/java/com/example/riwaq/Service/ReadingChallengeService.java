@@ -5,6 +5,7 @@ import com.example.riwaq.DTO.In.ReadingChallengeDTOIn;
 import com.example.riwaq.DTO.Out.ReadingChallengeDTOOut;
 import com.example.riwaq.Model.*;
 import com.example.riwaq.Repository.*;
+import com.example.riwaq.Repository.FriendshipRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -58,13 +59,13 @@ public class ReadingChallengeService {
             throw new ApiException("Friendship must be accepted before creating challenge");
         }
 
-        UserBook senderBook = userBookRepository.findUserBookByUserIdAndBookId(senderId, bookId);
+        UserBook senderBook = userBookRepository.findUserBookByUser_IdAndBook_Id(senderId, bookId);
 
         if (senderBook == null) {
             throw new ApiException("Sender must add the book before creating challenge");
         }
 
-        UserBook receiverBook = userBookRepository.findUserBookByUserIdAndBookId(receiverId, bookId);
+        UserBook receiverBook = userBookRepository.findUserBookByUser_IdAndBook_Id(receiverId, bookId);
 
         if (receiverBook == null) {
             throw new ApiException("Receiver must add the book before joining challenge");
