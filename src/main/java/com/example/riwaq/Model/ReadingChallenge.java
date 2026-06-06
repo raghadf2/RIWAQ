@@ -17,7 +17,7 @@ public class ReadingChallenge {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false)
+    @Column(name = "friendship_id", nullable = false)
     private Integer friendshipId;
 
     @Column(nullable = false)
@@ -44,4 +44,8 @@ public class ReadingChallenge {
     private Date respondedAt;
 
     private Date completedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "friendship_id", insertable = false, updatable = false)
+    private Friendship friendship;
 }
