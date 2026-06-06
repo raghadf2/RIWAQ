@@ -1,7 +1,7 @@
 package com.example.riwaq.Controller;
 
 import com.example.riwaq.Api.ApiResponse;
-import com.example.riwaq.DTO.In.ReadingChallengeDTOIn;
+import com.example.riwaq.DTO.IN.ReadingChallengeDTOIn;
 import com.example.riwaq.Service.ReadingChallengeService;
 import com.example.riwaq.Service.WhatsAppService;
 import jakarta.validation.Valid;
@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @RestController
 @RequestMapping("/api/v1/reading-challenge")

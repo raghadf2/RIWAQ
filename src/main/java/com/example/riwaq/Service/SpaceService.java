@@ -1,8 +1,8 @@
 package com.example.riwaq.Service;
 
 import com.example.riwaq.Api.ApiException;
-import com.example.riwaq.DTO.In.SpaceDTOIn;
-import com.example.riwaq.DTO.Out.SpaceDTOOut;
+import com.example.riwaq.DTO.IN.SpaceDTOIn;
+import com.example.riwaq.DTO.OUT.SpaceDTOOut;
 import com.example.riwaq.Model.Book;
 import com.example.riwaq.Model.Space;
 import com.example.riwaq.Model.User;

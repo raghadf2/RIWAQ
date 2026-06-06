@@ -1,6 +1,6 @@
 package com.example.riwaq.Repository;
 
-import com.example.riwaq.DTO.Out.TopRatedBookDTOOut;
+import com.example.riwaq.DTO.OUT.TopRatedBookDTOOut;
 import com.example.riwaq.Model.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,7 +21,7 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     Integer countReviewsByBook_Id(Integer bookId);
 
     @Query("""
-            select new com.example.riwaq.DTO.Out.TopRatedBookDTOOut(
+            select new com.example.riwaq.DTO.OUT.TopRatedBookDTOOut(
                 r.book.id,
                 r.book.title,
                 r.book.author,

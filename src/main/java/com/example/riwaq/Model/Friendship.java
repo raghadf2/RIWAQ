@@ -1,9 +1,12 @@
 package com.example.riwaq.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
+
+import java.util.Set;
 
 @Entity
 @Getter
@@ -26,7 +29,6 @@ public class Friendship {
     @Column(nullable = false)
     private String status = "PENDING";
 
-    //==============
     @ManyToOne
     @JoinColumn(name = "senderId", insertable = false, updatable = false)
     private User sender;
@@ -35,5 +37,7 @@ public class Friendship {
     @JoinColumn(name = "receiverId", insertable = false, updatable = false)
     private User receiver;
 
-
+    @JsonIgnore
+    @OneToMany(mappedBy = "friendship")
+    private Set<ReadingChallenge> readingChallenges;
 }

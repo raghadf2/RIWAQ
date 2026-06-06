@@ -1,7 +1,7 @@
 package com.example.riwaq.Service;
 
 import com.example.riwaq.Api.ApiException;
-import com.example.riwaq.DTO.In.UserDtoIn;
+import com.example.riwaq.DTO.IN.UserDtoIn;
 import com.example.riwaq.Model.User;
 import com.example.riwaq.Repository.UserRepository;
 import jakarta.validation.Valid;

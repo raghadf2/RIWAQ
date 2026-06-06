@@ -1,8 +1,8 @@
 package com.example.riwaq.Service;
 
 import com.example.riwaq.Api.ApiException;
-import com.example.riwaq.DTO.In.ReadingChallengeDTOIn;
-import com.example.riwaq.DTO.Out.ReadingChallengeDTOOut;
+import com.example.riwaq.DTO.IN.ReadingChallengeDTOIn;
+import com.example.riwaq.DTO.OUT.ReadingChallengeDTOOut;
 import com.example.riwaq.Model.*;
 import com.example.riwaq.Repository.*;
 import com.example.riwaq.Repository.FriendshipRepository;
