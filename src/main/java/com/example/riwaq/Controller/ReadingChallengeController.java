@@ -72,14 +72,4 @@ public class ReadingChallengeController {
         return ResponseEntity.status(200).body(new ApiResponse("Reading progress updated successfully"));
     }
 
-    @GetMapping("/test-whatsapp")
-    public String testWhatsApp() {
-
-        whatsAppService.sendWhatsAppMessage(
-                "0559899144",
-                "Hello from Riwaq 🚀"
-        );
-
-        return "Message sent";
-    }
 }

@@ -27,6 +27,7 @@ public class ReadingChallengeService {
     private final FriendshipRepository friendshipRepository;
     private final NotificationService notificationService;
     private final WhatsAppService whatsAppService;
+    private final UserBookService userBookService;
 
     public void addChallenge(Integer bookId, Integer senderId, Integer receiverId, ReadingChallengeDTOIn dto) {
         Book book = bookRepository.findBookById(bookId);
@@ -316,6 +317,11 @@ public class ReadingChallengeService {
             otherUserId = senderId;
         }
 
+        // ===== Streak Start ===== //
+        Integer oldPage = userBook.getCurrentPage() == null ? 0 : userBook.getCurrentPage();
+        boolean progressIncreased = page > oldPage;
+        // ===== Streak End ===== //
+
         userBook.setCurrentPage(page);
         userBook.setProgressPercentage((page * 100) / book.getPageCount());
 
@@ -325,9 +331,14 @@ public class ReadingChallengeService {
             userBook.setStatus("READING");
         }
 
+        // ===== Streak Start =====
+        if (progressIncreased && page > 0) {
+            userBookService.updateReadingStreak(userBook);
+        }
+        // ===== Streak End =====
+
         userBookRepository.save(userBook);
 
-        updateReadingStreak(userBook);
 
         notificationService.sendChallengeProgressNotification(
                 otherUserId,
@@ -424,34 +435,4 @@ public class ReadingChallengeService {
         return dtoOutList;
     }
 
-    private void updateReadingStreak(UserBook userBook){
-
-        LocalDate today = LocalDate.now();
-
-        if(userBook.getLastReadingDate() == null){
-
-            userBook.setReadingStreak(1);
-
-        } else {
-
-            long daysDifference = ChronoUnit.DAYS.between(userBook.getLastReadingDate(), today);
-
-            if(daysDifference == 0){
-
-                return;
-
-            } else if(daysDifference == 1){
-
-                userBook.setReadingStreak(userBook.getReadingStreak() + 1);
-
-            } else {
-
-                userBook.setReadingStreak(1);
-            }
-        }
-
-        userBook.setLastReadingDate(today);
-
-        userBookRepository.save(userBook);
-    }
 }
