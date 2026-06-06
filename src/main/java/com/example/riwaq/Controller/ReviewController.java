@@ -46,6 +46,16 @@ public class ReviewController {
         return ResponseEntity.status(200).body(new ApiResponse("Review added successfully"));
     }
 
+    @GetMapping("/get/book/{bookId}")
+    public ResponseEntity<?> getReviewsByBookId(@PathVariable Integer bookId) {
+        return ResponseEntity.ok(reviewService.getReviewsByBookId(bookId));
+    }
+
+    @GetMapping("/get/user/{userId}")
+    public ResponseEntity<?> getReviewsByUserId(@PathVariable Integer userId) {
+        return ResponseEntity.ok(reviewService.getReviewsByUserId(userId));
+    }
+
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateReview(@PathVariable Integer id, @RequestBody @Valid ReviewDTOIn dto) {
         reviewService.updateReview(id, dto);

@@ -58,6 +58,34 @@ public class ReviewService {
         return reviewRepository.findAllByOrderByCreatedAtDesc().stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    public List<ReviewDTOOut> getReviewsByBookId(Integer bookId) {
+        Book book = bookRepository.findBookById(bookId);
+        if (book == null) {
+            throw new ApiException("Book not found");
+        }
+
+        List<Review> reviews = reviewRepository.findReviewsByBook_Id(bookId);
+        if (reviews.isEmpty()) {
+            throw new ApiException("No reviews found for this book");
+        }
+
+        return reviews.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    public List<ReviewDTOOut> getReviewsByUserId(Integer userId) {
+        User user = userRepository.findUserById(userId);
+        if (user == null) {
+            throw new ApiException("User not found");
+        }
+
+        List<Review> reviews = reviewRepository.findReviewsByUser_Id(userId);
+        if (reviews.isEmpty()) {
+            throw new ApiException("No reviews found for this user");
+        }
+
+        return reviews.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
     public void addReview(Integer userId, Integer bookId, ReviewDTOIn dto) {
         User user = userRepository.findUserById(userId);
 

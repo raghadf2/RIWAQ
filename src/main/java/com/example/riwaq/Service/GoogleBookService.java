@@ -1,13 +1,11 @@
 package com.example.riwaq.Service;
 
 import com.example.riwaq.Api.ApiException;
-//import com.example.riwaq.DTO.GoogleBookDto;
 import com.example.riwaq.DTO.GoogleBookDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-//import tools.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 
 @Service
 public class GoogleBookService {
@@ -27,9 +25,6 @@ public class GoogleBookService {
 
         JsonNode root = restTemplate.getForObject(url, JsonNode.class);
 
-//        if (root == null || !root.has("items")) {
-//            throw new ApiException("Book not found");
-//        }
         if (root == null || !root.has("items") || root.get("items").size() == 0) {
             throw new ApiException("Book not found");
         }
