@@ -20,9 +20,6 @@ public class SpaceMembership {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer membershipId;
 
-    @Column(nullable = false)
-    private Integer userId;
-
     private Integer spaceId;
 
     private LocalDateTime joinedAt;

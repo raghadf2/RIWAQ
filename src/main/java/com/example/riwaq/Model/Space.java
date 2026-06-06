@@ -18,9 +18,6 @@ public class Space {
     private Integer spaceId;
 
     @Column(nullable = false)
-    private Integer bookId;
-
-    @Column(nullable = false)
     private Integer creatorId;
 
     @Column(nullable = false, length = 20)

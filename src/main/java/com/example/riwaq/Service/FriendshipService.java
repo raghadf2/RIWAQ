@@ -9,6 +9,7 @@ import com.example.riwaq.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -78,26 +79,44 @@ public class FriendshipService {
         friendshipRepository.save(friendship);
     }
 
-    public void acceptFriendship(Integer id) {
-        updateFriendshipStatus(id, "ACCEPTED");
-    }
+    public void acceptFriendship(Integer friendshipId, Integer userId){
 
-    public void rejectFriendship(Integer id) {
-        updateFriendshipStatus(id, "REJECTED");
-    }
+        Friendship friendship = friendshipRepository.findFriendshipById(friendshipId);
 
-    public void blockFriendship(Integer id) {
-        updateFriendshipStatus(id, "BLOCKED");
-    }
-
-    private void updateFriendshipStatus(Integer id, String status) {
-        Friendship friendship = friendshipRepository.findFriendshipById(id);
-
-        if (friendship == null) {
+        if(friendship == null){
             throw new ApiException("Friendship not found");
         }
 
-        friendship.setStatus(status);
+        if(!friendship.getReceiverId().equals(userId)){
+            throw new ApiException("Only receiver can accept friendship request");
+        }
+
+        if(!friendship.getStatus().equals("PENDING")){
+            throw new ApiException("Only pending requests can be accepted");
+        }
+
+        friendship.setStatus("ACCEPTED");
+
+        friendshipRepository.save(friendship);
+    }
+
+    public void rejectFriendship(Integer friendshipId, Integer userId){
+
+        Friendship friendship = friendshipRepository.findFriendshipById(friendshipId);
+
+        if(friendship == null){
+            throw new ApiException("Friendship not found");
+        }
+
+        if(!friendship.getReceiverId().equals(userId)){
+            throw new ApiException("Only receiver can reject friendship request");
+        }
+
+        if(!friendship.getStatus().equals("PENDING")){
+            throw new ApiException("Only pending requests can be rejected");
+        }
+
+        friendship.setStatus("REJECTED");
 
         friendshipRepository.save(friendship);
     }
@@ -117,5 +136,27 @@ public class FriendshipService {
                 friendship.getReceiverId(),
                 friendship.getStatus()
         );
+    }
+
+    //==================
+
+    public List<FriendshipDTOOut> getPendingFriendRequests(Integer userId){
+
+        User user = userRepository.findUserById(userId);
+
+        if(user == null){
+            throw new ApiException("User not found");
+        }
+
+        List<Friendship> pendingFriendships = friendshipRepository.findFriendshipsByReceiverIdAndStatus(userId, "PENDING");
+
+        List<FriendshipDTOOut> pendingFriendshipDTOs = new ArrayList<>();
+
+        for(Friendship friendship : pendingFriendships){
+            FriendshipDTOOut friendshipDTOOut = convertToDTO(friendship);
+            pendingFriendshipDTOs.add(friendshipDTOOut);
+        }
+
+        return pendingFriendshipDTOs;
     }
 }

@@ -1,8 +1,8 @@
 package com.example.riwaq.Service;
 
 import com.example.riwaq.Api.ApiException;
-import com.example.riwaq.DTO.In.SpaceDTOIn;
-import com.example.riwaq.DTO.Out.SpaceDTOOut;
+import com.example.riwaq.DTO.IN.SpaceDTOIn;
+import com.example.riwaq.DTO.OUT.SpaceDTOOut;
 import com.example.riwaq.Model.Book;
 import com.example.riwaq.Model.Space;
 import com.example.riwaq.Model.User;
@@ -40,7 +40,7 @@ public class SpaceService {
             throw new ApiException("User not found");
         }
 
-        UserBook userBook = userBookRepository.findUserBookByUserIdAndBookId(creatorId, bookId);
+        UserBook userBook = userBookRepository.findUserBookByUser_IdAndBook_Id(creatorId, bookId);
 
         if (userBook == null) {
             throw new ApiException("User must add the book before creating a space");
@@ -50,14 +50,14 @@ public class SpaceService {
             throw new ApiException("User must complete the book before creating a space");
         }
 
-        Space existing = spaceRepository.findSpaceByBookIdAndName(bookId, dto.getName());
+        Space existing = spaceRepository.findSpaceByBook_IdAndName(bookId, dto.getName());
 
         if (existing != null) {
             throw new ApiException("Space with same name already exists for this book");
         }
 
         Space space = new Space();
-        space.setBookId(bookId);
+        space.setBook(book);
         space.setCreatorId(creatorId);
         space.setName(dto.getName());
         space.setDescription(dto.getDescription());
@@ -74,7 +74,7 @@ public class SpaceService {
             SpaceDTOOut dtoOut = new SpaceDTOOut();
 
             dtoOut.setSpaceId(space.getSpaceId());
-            dtoOut.setBookId(space.getBookId());
+            dtoOut.setBookId(space.getBook().getId());
             dtoOut.setCreatorId(space.getCreatorId());
             dtoOut.setName(space.getName());
             dtoOut.setDescription(space.getDescription());
@@ -96,7 +96,7 @@ public class SpaceService {
             throw new ApiException("Cannot update space, it has active members");
         }
 
-        Space existing = spaceRepository.findSpaceByBookIdAndName(space.getBookId(), dto.getName());
+        Space existing = spaceRepository.findSpaceByBook_IdAndName(space.getBook().getId(), dto.getName());
 
         if (existing != null && !existing.getSpaceId().equals(spaceId)) {
             throw new ApiException("Space with same name already exists for this book");
@@ -172,14 +172,14 @@ public class SpaceService {
 
         for (Space space : spaces) {
 
-            UserBook userBook = userBookRepository.findUserBookByUserIdAndBookId(userId, space.getBookId());
+            UserBook userBook = userBookRepository.findUserBookByUser_IdAndBook_Id(userId, space.getBook().getId());
 
             if (userBook != null && userBook.getStatus().equalsIgnoreCase(status)) {
 
                 SpaceDTOOut dtoOut = new SpaceDTOOut();
 
                 dtoOut.setSpaceId(space.getSpaceId());
-                dtoOut.setBookId(space.getBookId());
+                dtoOut.setBookId(space.getBook().getId());
                 dtoOut.setCreatorId(space.getCreatorId());
                 dtoOut.setName(space.getName());
                 dtoOut.setDescription(space.getDescription());

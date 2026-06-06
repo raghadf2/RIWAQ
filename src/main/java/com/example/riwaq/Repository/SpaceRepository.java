@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SpaceRepository  extends JpaRepository<Space,Integer> {
     Space findSpaceBySpaceId(Integer spaceId);
-    Space findSpaceByBookIdAndName(Integer bookId, String name);
-    Boolean existsByBookIdAndName(Integer bookId, String name);
+    Space findSpaceByBook_IdAndName(Integer bookId, String name);
+    Boolean existsByBook_IdAndName(Integer bookId, String name);
 }
 

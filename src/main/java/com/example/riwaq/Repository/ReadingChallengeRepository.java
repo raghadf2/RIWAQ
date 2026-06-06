@@ -4,6 +4,7 @@ import com.example.riwaq.Model.ReadingChallenge;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -18,5 +19,5 @@ public interface ReadingChallengeRepository extends JpaRepository<ReadingChallen
 
     List<ReadingChallenge> findReadingChallengesByStatus(String status);
 
-    List<ReadingChallenge> findReadingChallengesByCreatedAtBetween(Date startDate, Date endDate);
+    List<ReadingChallenge> findReadingChallengesByCreatedAtBetween(LocalDate startDate, LocalDate endDate);
 }

@@ -27,6 +27,10 @@ public class UserBook {
     private Integer progressPercentage;
     private LocalDate lastProgressUpdateAt;
 
+    private Integer readingStreak = 0;
+
+    private LocalDate lastReadingDate;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnoreProperties({

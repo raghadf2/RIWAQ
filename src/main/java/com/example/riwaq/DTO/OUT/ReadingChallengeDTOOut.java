@@ -1,4 +1,4 @@
-package com.example.riwaq.DTO.Out;
+package com.example.riwaq.DTO.OUT;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,6 +16,7 @@ public class ReadingChallengeDTOOut {
     private Integer bookId;
     private Integer senderId;
     private Integer receiverId;
+    private Integer winnerId;
     private Integer senderPage;
     private Integer receiverPage;
     private String status;
