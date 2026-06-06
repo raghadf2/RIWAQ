@@ -254,6 +254,16 @@ public class UserBookService {
             averageProgress = totalProgress / userBooks.size();
         }
 
+        String streakMessage =
+                "أكمل المزيد من الكتب لبدء سلسلة إنجازاتك القرائية.";
+
+        if (completed >= 2) {
+            streakMessage =
+                    "تهانينا! لقد أكملت "
+                            + completed
+                            + " كتب وبدأت سلسلة إنجازاتك القرائية.";
+        }
+
 //        String prompt =
 //                "Return ONLY valid JSON in this format: "
 //                        + "{ \"readerProfile\":\"\", \"readingAdvice\":\"\" }. "
@@ -306,7 +316,7 @@ public class UserBookService {
         response.put("highestProgressBook", highestProgressBook);
         response.put("highestProgress", highestProgress + " %");
         response.put("userReviewsCount", userReviewsCount);
-
+        response.put("streak", streakMessage);
 
         return response;
     }
