@@ -235,6 +235,14 @@ public class NotificationService {
             subject = "منشور جديد حول كتابك الحالي 📝";
             break;
 
+            case "CHALLENGE_PROGRESS":
+                subject = "تحديث جديد في تحدي القراءة 📖";
+                break;
+
+            case "CHALLENGE_WINNER":
+                subject = "تم إعلان فائز تحدي القراءة 🏆";
+                break;
+
             default:
                 subject = "إشعار من رواق 📚";
         }
@@ -300,6 +308,66 @@ public class NotificationService {
                 notification.getCreatedAt(),
                 notification.getSentByEmail(),
                 notification.getSentByWhatsApp()
+        );
+    }
+
+    //===============
+    public void sendChallengeProgressNotification(Integer userId, Integer challengeId, Integer progressUserId, String bookTitle, Integer page, Integer totalPages) {
+
+        String message =
+                "📖 تم تحديث تقدم القراءة في تحدي كتاب "
+                        + bookTitle
+                        + ".\n"
+                        + "المستخدم رقم " + progressUserId
+                        + " وصل إلى الصفحة "
+                        + page
+                        + " من "
+                        + totalPages
+                        + ".";
+
+        sendNotification(
+                userId,
+                "CHALLENGE_PROGRESS",
+                message,
+                challengeId,
+                "READING_CHALLENGE"
+        );
+    }
+
+    public void sendChallengeWinnerNotification(Integer userId, Integer challengeId, Integer winnerId, String bookTitle) {
+
+        String message =
+                "🏆 انتهى تحدي قراءة كتاب "
+                        + bookTitle
+                        + ".\n"
+                        + "الفائز هو المستخدم رقم "
+                        + winnerId
+                        + "!";
+
+        sendNotification(
+                userId,
+                "CHALLENGE_WINNER",
+                message,
+                challengeId,
+                "READING_CHALLENGE"
+        );
+    }
+
+    public void sendChallengeAcceptedNotification(Integer userId, Integer challengeId, Integer receiverId, String bookTitle) {
+        String message =
+                "✅ تم قبول تحدي قراءة كتاب "
+                        + bookTitle
+                        + ".\n"
+                        + "المستخدم رقم "
+                        + receiverId
+                        + " قبل التحدي وبدأت المنافسة!";
+
+        sendNotification(
+                userId,
+                "CHALLENGE_ACCEPTED",
+                message,
+                challengeId,
+                "READING_CHALLENGE"
         );
     }
 }

@@ -43,8 +43,12 @@ public class User {
     private Set<Post> posts;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user")
-    private Set<Friendship>  friendships;
+    @OneToMany(mappedBy = "sender")
+    private Set<Friendship> sentFriendships;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "receiver")
+    private Set<Friendship> receivedFriendships;
 
     @JsonIgnore
     @OneToMany

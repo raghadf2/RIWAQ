@@ -29,27 +29,28 @@ public class FriendshipController {
         return ResponseEntity.status(200).body(new ApiResponse("Friendship added successfully"));
     }
 
-    @PutMapping("/accept/{id}")
-    public ResponseEntity<?> acceptFriendship(@PathVariable Integer id) {
-        friendshipService.acceptFriendship(id);
+    @PutMapping("/accept/{friendshipId}/{userId}")
+    public ResponseEntity<?> acceptFriendship(@PathVariable Integer friendshipId, @PathVariable Integer userId) {
+        friendshipService.acceptFriendship(friendshipId,userId);
         return ResponseEntity.status(200).body(new ApiResponse("Friendship accepted successfully"));
     }
 
-    @PutMapping("/reject/{id}")
-    public ResponseEntity<?> rejectFriendship(@PathVariable Integer id) {
-        friendshipService.rejectFriendship(id);
+    @PutMapping("/reject/{friendshipId}/{userId}")
+    public ResponseEntity<?> rejectFriendship(@PathVariable Integer friendshipId, @PathVariable Integer userId){
+
+        friendshipService.rejectFriendship(friendshipId,userId);
+
         return ResponseEntity.status(200).body(new ApiResponse("Friendship rejected successfully"));
     }
-
-    @PutMapping("/block/{id}")
-    public ResponseEntity<?> blockFriendship(@PathVariable Integer id) {
-        friendshipService.blockFriendship(id);
-        return ResponseEntity.status(200).body(new ApiResponse("Friendship blocked successfully"));
-    }
-
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteFriendship(@PathVariable Integer id) {
         friendshipService.deleteFriendship(id);
         return ResponseEntity.status(200).body(new ApiResponse("Friendship deleted successfully"));
+    }
+
+    //============
+    @GetMapping("/pending/{userId}")
+    public ResponseEntity<?> getPendingFriendRequests(@PathVariable Integer userId){
+        return ResponseEntity.status(200).body(friendshipService.getPendingFriendRequests(userId));
     }
 }

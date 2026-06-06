@@ -22,10 +22,11 @@ public class Friendship {
     @NotNull
     private Integer receiverId;
 
-    @Pattern(regexp = "PENDING|ACCEPTED|BLOCKED|REJECTED", message = "Status must be PENDING, ACCEPTED, BLOCKED, or REJECTED")
+    @Pattern(regexp = "PENDING|ACCEPTED|REJECTED", message = "Status must be PENDING, ACCEPTED, BLOCKED, or REJECTED")
     @Column(nullable = false)
     private String status = "PENDING";
 
+    //==============
     @ManyToOne
     @JoinColumn(name = "senderId", insertable = false, updatable = false)
     private User sender;
@@ -33,4 +34,6 @@ public class Friendship {
     @ManyToOne
     @JoinColumn(name = "receiverId", insertable = false, updatable = false)
     private User receiver;
+
+
 }

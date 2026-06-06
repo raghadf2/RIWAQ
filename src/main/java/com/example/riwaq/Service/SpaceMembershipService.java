@@ -41,7 +41,7 @@ public class SpaceMembershipService {
             throw new ApiException("User already joined this space");
         }
 
-        UserBook userBook = userBookRepository.findUserBookByUserIdAndBookId(userId, space.getBookId());
+        UserBook userBook = userBookRepository.findUserBookByUser_IdAndBook_Id(userId, space.getBook().getId());
 
         if (userBook == null) {
             throw new ApiException("User must add this book before joining the space");
@@ -53,7 +53,7 @@ public class SpaceMembershipService {
 
         SpaceMembership membership = new SpaceMembership();
         membership.setSpaceId(spaceId);
-        membership.setUserId(userId);
+        membership.setUser(user);
         membership.setJoinedAt(LocalDateTime.now());
 
         spaceMembershipRepository.save(membership);
@@ -127,7 +127,7 @@ public class SpaceMembershipService {
 
         dtoOut.setMembershipId(membership.getMembershipId());
         dtoOut.setSpaceId(membership.getSpaceId());
-        dtoOut.setUserId(membership.getUserId());
+        dtoOut.setUserId(membership.getUser().getId());
         dtoOut.setJoinedAt(membership.getJoinedAt());
 
         return dtoOut;
@@ -156,7 +156,7 @@ public class SpaceMembershipService {
 
         for (SpaceMembership membership : memberships) {
 
-            Integer memberId = membership.getUserId();
+            Integer memberId = membership.getUser().getId();
 
             if (memberId.equals(userId)) {
                 continue;

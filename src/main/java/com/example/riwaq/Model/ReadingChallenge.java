@@ -35,6 +35,8 @@ public class ReadingChallenge {
     @Column(nullable = false)
     private Integer receiverPage;
 
+    private Integer winnerId;
+
     @Column(nullable = false, length = 20)
     private String status;
 
@@ -44,4 +46,15 @@ public class ReadingChallenge {
     private Date respondedAt;
 
     private Date completedAt;
+
+    //==========
+    @ManyToOne
+    @JoinColumn(name = "friendshipId", insertable = false, updatable = false)
+    private Friendship friendship;
+
+    @ManyToOne
+    @JoinColumn(name = "bookId", insertable = false, updatable = false)
+    private Book book;
+
+
 }

@@ -1,14 +1,16 @@
 package com.example.riwaq.Controller;
 
 import com.example.riwaq.Api.ApiResponse;
-import com.example.riwaq.DTO.IN.ReadingChallengeDTOIn;
+import com.example.riwaq.DTO.In.ReadingChallengeDTOIn;
 import com.example.riwaq.Service.ReadingChallengeService;
+import com.example.riwaq.Service.WhatsAppService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @RestController
@@ -17,6 +19,7 @@ import java.util.Date;
 public class ReadingChallengeController {
 
     private final ReadingChallengeService readingChallengeService;
+    private final WhatsAppService whatsAppService;
 
     @PostMapping("/add/{bookId}/{senderId}/{receiverId}")
     public ResponseEntity<?> addChallenge(@PathVariable Integer bookId, @PathVariable Integer senderId, @PathVariable Integer receiverId, @RequestBody @Valid ReadingChallengeDTOIn dto) {
@@ -34,12 +37,6 @@ public class ReadingChallengeController {
         return ResponseEntity.status(200).body(readingChallengeService.getChallengeById(challengeId));
     }
 
-    @PutMapping("/update/{challengeId}")
-    public ResponseEntity<?> updateChallenge(@PathVariable Integer challengeId, @RequestBody @Valid ReadingChallengeDTOIn dto) {
-        readingChallengeService.updateChallenge(challengeId, dto);
-        return ResponseEntity.status(200).body(new ApiResponse("Reading challenge updated successfully"));
-    }
-
     @DeleteMapping("/delete/{challengeId}/{requesterId}")
     public ResponseEntity<?> deleteChallenge(@PathVariable Integer challengeId, @PathVariable Integer requesterId) {
         readingChallengeService.deleteChallenge(challengeId, requesterId);
@@ -54,8 +51,36 @@ public class ReadingChallengeController {
     }
 
     @GetMapping("/get/date")
-    public ResponseEntity<?> getChallengesByDate(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+    public ResponseEntity<?> getChallengesByDate(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate) {
         return ResponseEntity.status(200).body(readingChallengeService.getChallengesByDate(startDate, endDate));
     }
 
+    @PutMapping("/accept/{challengeId}/{userId}")
+    public ResponseEntity<?> acceptChallenge(@PathVariable Integer challengeId, @PathVariable Integer userId) {
+        readingChallengeService.acceptChallenge(challengeId, userId);
+        return ResponseEntity.status(200).body(new ApiResponse("Reading challenge accepted successfully"));
+    }
+
+    @PutMapping("/reject/{challengeId}/{userId}")
+    public ResponseEntity<?> rejectChallenge(@PathVariable Integer challengeId, @PathVariable Integer userId) {
+        readingChallengeService.rejectChallenge(challengeId, userId);
+        return ResponseEntity.status(200).body(new ApiResponse("Reading challenge rejected successfully"));
+    }
+
+    @PutMapping("/update-progress/{challengeId}/{userId}/{page}")
+    public ResponseEntity<?> updateMyProgress(@PathVariable Integer challengeId, @PathVariable Integer userId, @PathVariable Integer page) {
+        readingChallengeService.updateMyProgress(challengeId, userId, page);
+        return ResponseEntity.status(200).body(new ApiResponse("Reading progress updated successfully"));
+    }
+
+    @GetMapping("/test-whatsapp")
+    public String testWhatsApp() {
+
+        whatsAppService.sendWhatsAppMessage(
+                "0559899144",
+                "Hello from Riwaq 🚀"
+        );
+
+        return "Message sent";
+    }
 }

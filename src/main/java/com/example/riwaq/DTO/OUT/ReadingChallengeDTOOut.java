@@ -16,6 +16,7 @@ public class ReadingChallengeDTOOut {
     private Integer bookId;
     private Integer senderId;
     private Integer receiverId;
+    private Integer winnerId;
     private Integer senderPage;
     private Integer receiverPage;
     private String status;
