@@ -28,11 +28,16 @@ public class Book {
     @OneToMany(mappedBy = "book")
     private Set<UserBook> userBooks;
 
+    /*
     @JsonIgnore
     @OneToMany(mappedBy = "book")
     private Set<Review> reviews;
 
+<<<<<<< HEAD
+     */
+=======
    @JsonIgnore
     @OneToMany(mappedBy = "book")
     private Set<Space>  spaces;
+>>>>>>> 7db5ceb7db92c5edc5825c5331569a00a21f95a7
 }

@@ -4,12 +4,11 @@ import com.example.riwaq.Model.Space;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface SpaceRepository  extends JpaRepository<Space,Integer> {
     Space findSpaceBySpaceId(Integer spaceId);
-    Space findByBookIdAndName(Integer bookId, String name);
+    Space findSpaceByBookIdAndName(Integer bookId, String name);
+    Boolean existsByBookIdAndName(Integer bookId, String name);
 }
 

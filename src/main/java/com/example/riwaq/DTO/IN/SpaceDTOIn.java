@@ -1,7 +1,6 @@
-package com.example.riwaq.DTO.IN;
+package com.example.riwaq.DTO.In;
 
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,9 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class SpaceDTOIn {
-
-    @NotNull(message = "Book id is required")
-    private Integer bookId;
 
     @NotEmpty(message = "Name cannot be empty")
     @Size(min=5,max=20,message ="Name length must stay within 5 to 20 characters")

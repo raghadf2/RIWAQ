@@ -21,7 +21,7 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     Integer countReviewsByBook_Id(Integer bookId);
 
     @Query("""
-            select new com.example.riwaq.DTO.OUT.TopRatedBookDTOOut(
+            select new com.example.riwaq.DTO.Out.TopRatedBookDTOOut(
                 r.book.id,
                 r.book.title,
                 r.book.author,

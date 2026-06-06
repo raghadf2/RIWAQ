@@ -1,7 +1,7 @@
 package com.example.riwaq.Controller;
 
 import com.example.riwaq.Api.ApiResponse;
-import com.example.riwaq.DTO.IN.SpaceDTOIn;
+import com.example.riwaq.DTO.In.SpaceDTOIn;
 import com.example.riwaq.Service.SpaceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,9 +15,9 @@ public class SpaceController {
 
     private final SpaceService spaceService;
 
-    @PostMapping("/add")
-    public ResponseEntity<?> addSpace(@RequestBody @Valid SpaceDTOIn dto){
-        spaceService.addSpace(dto);
+    @PostMapping("/add/{bookId}/{creatorId}")
+    public ResponseEntity<?> addSpace(@PathVariable Integer bookId, @PathVariable Integer creatorId, @RequestBody @Valid SpaceDTOIn dto) {
+        spaceService.addSpace(bookId, creatorId, dto);
         return ResponseEntity.status(200).body(new ApiResponse("Space added successfully"));
     }
 
@@ -32,10 +32,27 @@ public class SpaceController {
         return ResponseEntity.status(200).body(new ApiResponse("Space updated successfully"));
     }
 
-    @DeleteMapping("/delete/{spaceId}")
-    public ResponseEntity<?> deleteSpace(@PathVariable Integer spaceId){
-        spaceService.deleteSpace(spaceId);
+    @DeleteMapping("/delete/{spaceId}/{requesterId}")
+    public ResponseEntity<?> deleteSpace(@PathVariable Integer spaceId, @PathVariable Integer requesterId) {
+        spaceService.deleteSpace(spaceId, requesterId);
         return ResponseEntity.status(200).body(new ApiResponse("Space deleted successfully"));
+    }
+
+    //===============
+
+    @GetMapping("/suggestions/{bookId}")
+    public ResponseEntity<?> suggestSpaceQuestions(@PathVariable Integer bookId) {
+        return ResponseEntity.status(200).body(spaceService.suggestSpaceQuestions(bookId));
+    }
+
+    @GetMapping("/get/status/{userId}/{status}")
+    public ResponseEntity<?> getSpacesByUserBookStatus(@PathVariable Integer userId, @PathVariable String status) {
+        return ResponseEntity.status(200).body(spaceService.getSpacesByUserBookStatus(userId, status));
+    }
+
+    @GetMapping("/reflection/{bookId}/{pageNumber}")
+    public ResponseEntity<?> generateReflectionPrompts(@PathVariable Integer bookId, @PathVariable Integer pageNumber) {
+        return ResponseEntity.status(200).body(spaceService.generateReflectionPrompts(bookId, pageNumber));
     }
 
 }

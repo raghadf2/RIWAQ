@@ -1,4 +1,4 @@
-package com.example.riwaq.DTO.IN;
+package com.example.riwaq.DTO.In;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -12,23 +12,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReadingChallengeDTOIn {
 
-    @NotNull(message = "Friendship ID must not be null")
-    private Integer friendshipId;
-
-    @NotNull(message = "Book ID must not be null")
-    private Integer bookId;
-
-    @NotNull(message = "Sender ID must not be null")
-    private Integer senderId;
-
-    @NotNull(message = "Receiver ID must not be null")
-    private Integer receiverId;
-
-    @NotNull(message = "Sender page must not be null")
-    @Min(value = 1, message = "Sender page must be greater than 0")
+    @NotNull(message = "Sender page is required")
+    @Min(value = 0, message = "Sender page cannot be negative")
     private Integer senderPage;
 
-    @NotNull(message = "Receiver page must not be null")
-    @Min(value = 1, message = "Receiver page must be greater than 0")
+    @NotNull(message = "Receiver page is required")
+    @Min(value = 0, message = "Receiver page cannot be negative")
     private Integer receiverPage;
 }
