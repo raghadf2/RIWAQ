@@ -8,8 +8,7 @@ import java.util.List;
 
 @Repository
 public interface SpaceMembershipRepository  extends JpaRepository<SpaceMembership,Integer> {
-    SpaceMembership findSpaceMembershipByMembershipId(Integer membershipId);
-    SpaceMembership findSpaceMembershipBySpaceIdAndUserId(Integer spaceId, Integer userId);
-    List<SpaceMembership> findAllBySpaceId(Integer spaceId);
+    SpaceMembership findSpaceMembershipBySpace_SpaceIdAndUser_Id(Integer spaceId, Integer userId);
+    List<SpaceMembership> findAllBySpace_SpaceId(Integer spaceId);
 
 }

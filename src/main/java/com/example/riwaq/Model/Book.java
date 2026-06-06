@@ -38,5 +38,9 @@ public class Book {
     @OneToMany(mappedBy = "book")
     private Set<Space>  spaces;
 
+    @OneToMany(mappedBy = "book")
+    @JsonIgnore
+    private Set<ReadingChallenge> readingChallenges;
+
 
 }

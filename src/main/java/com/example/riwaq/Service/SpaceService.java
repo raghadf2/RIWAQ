@@ -152,7 +152,6 @@ public class SpaceService {
         return openAIService.generateJsonAnalysis(prompt);
     }
 
-
     public List<SpaceDTOOut> getSpacesByUserBookStatus(Integer userId, String status) {
 
         User user = userRepository.findUserById(userId);

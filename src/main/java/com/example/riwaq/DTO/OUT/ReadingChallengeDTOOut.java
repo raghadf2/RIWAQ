@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -20,7 +21,7 @@ public class ReadingChallengeDTOOut {
     private Integer senderPage;
     private Integer receiverPage;
     private String status;
-    private Date createdAt;
-    private Date respondedAt;
-    private Date completedAt;
+    private LocalDateTime  createdAt;
+    private LocalDateTime respondedAt;
+    private LocalDateTime  completedAt;
 }

@@ -30,12 +30,12 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<UserBook> userBooks;
 
-    /*
+
     @JsonIgnore
     @OneToMany(mappedBy = "user")
     private Set<Review> reviews;
 
-     */
+
 
 
     @JsonIgnore
@@ -51,7 +51,13 @@ public class User {
     private Set<Friendship> receivedFriendships;
 
     @JsonIgnore
-    @OneToMany
+    @OneToMany(mappedBy = "user")
     private Set<SpaceMembership>  spaceMemberships;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private Set<PostLike> postLikes;
+
+
 
 }

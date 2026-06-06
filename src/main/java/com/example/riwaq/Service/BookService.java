@@ -6,6 +6,7 @@ import com.example.riwaq.DTO.GoogleBookDto;
 import com.example.riwaq.DTO.OUT.TopRatedBookDTOOut;
 import com.example.riwaq.Model.Book;
 import com.example.riwaq.Model.Post;
+import com.example.riwaq.Model.Review;
 import com.example.riwaq.Model.User;
 import com.example.riwaq.Repository.BookRepository;
 import com.example.riwaq.Repository.PostRepository;
@@ -149,6 +150,24 @@ public class BookService {
 
         // all post related to this book
         List<Post> posts = postRepository.findPostsByUserBook_Book_Id(bookId);
+        // Use reviews to count reviews and calculate the average rating.
+        List<Review> reviews = reviewRepository.findAll();
+
+        int reviewsCount = 0;
+        double averageRating = 0;
+
+        for (Review review : reviews) {
+
+            if (review.getBook().getId().equals(bookId)) {
+
+                reviewsCount++;
+                averageRating += review.getRating();
+            }
+        }
+
+        if (reviewsCount > 0) {
+            averageRating = averageRating / reviewsCount;
+        }
 
         Integer mostPostedPage = null;
         Integer maxPosts = 0;
@@ -201,6 +220,8 @@ public class BookService {
                         + ", المصدر = " + book.getSource()
                         + ", عدد المنشورات = " + postsCount
                         + ", أكثر صفحة تمت مناقشتها = " + mostPostedPage
+                        + ", عدد المراجعات = " + reviewsCount
+                        + ", متوسط التقييم = " + averageRating
                         + ". "
                         + "اكتب ملخصًا قصيرًا عن تفاعل القراء مع الكتاب "
                         + "وقدّم توصية واحدة مفيدة.";
@@ -217,7 +238,8 @@ public class BookService {
         response.put("postsCount", postsCount);
         response.put("mostPostedPage", mostPostedPage);
         response.put("aiAnalysis", aiAnalysis);
-
+        response.put("reviewsCount", reviewsCount);
+        response.put("averageRating", averageRating);
         return response;
     }
 

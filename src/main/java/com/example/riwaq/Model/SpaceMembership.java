@@ -20,14 +20,14 @@ public class SpaceMembership {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer membershipId;
 
-    private Integer spaceId;
-
     private LocalDateTime joinedAt;
 
     @ManyToOne
+    @JoinColumn(name = "space_id", nullable = false)
     @JsonIgnore
     private Space space;
 
     @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }

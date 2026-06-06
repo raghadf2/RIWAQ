@@ -35,7 +35,7 @@ public class SpaceMembershipService {
             throw new ApiException("User not found");
         }
 
-        SpaceMembership existing = spaceMembershipRepository.findSpaceMembershipBySpaceIdAndUserId(spaceId, userId);
+        SpaceMembership existing = spaceMembershipRepository.findSpaceMembershipBySpace_SpaceIdAndUser_Id(spaceId, userId);
 
         if (existing != null) {
             throw new ApiException("User already joined this space");
@@ -52,7 +52,7 @@ public class SpaceMembershipService {
         }
 
         SpaceMembership membership = new SpaceMembership();
-        membership.setSpaceId(spaceId);
+        membership.setSpace(space);
         membership.setUser(user);
         membership.setJoinedAt(LocalDateTime.now());
 
@@ -78,7 +78,7 @@ public class SpaceMembershipService {
             throw new ApiException("Space not found");
         }
 
-        List<SpaceMembership> memberships = spaceMembershipRepository.findAllBySpaceId(spaceId);
+        List<SpaceMembership> memberships = spaceMembershipRepository.findAllBySpace_SpaceId(spaceId);
 
         List<SpaceMembershipDTOOut> dtoOutList = new ArrayList<>();
 
@@ -106,8 +106,7 @@ public class SpaceMembershipService {
             throw new ApiException("Member not found");
         }
 
-        SpaceMembership membership =
-                spaceMembershipRepository.findSpaceMembershipBySpaceIdAndUserId(spaceId, memberId);
+        SpaceMembership membership = spaceMembershipRepository.findSpaceMembershipBySpace_SpaceIdAndUser_Id(spaceId, memberId);
 
         if (membership == null) {
             throw new ApiException("Membership not found");
@@ -126,7 +125,7 @@ public class SpaceMembershipService {
         SpaceMembershipDTOOut dtoOut = new SpaceMembershipDTOOut();
 
         dtoOut.setMembershipId(membership.getMembershipId());
-        dtoOut.setSpaceId(membership.getSpaceId());
+        dtoOut.setSpaceId(membership.getSpace().getSpaceId());
         dtoOut.setUserId(membership.getUser().getId());
         dtoOut.setJoinedAt(membership.getJoinedAt());
 
@@ -150,7 +149,7 @@ public class SpaceMembershipService {
             throw new ApiException("Space not found");
         }
 
-        List<SpaceMembership> memberships = spaceMembershipRepository.findAllBySpaceId(spaceId);
+        List<SpaceMembership> memberships = spaceMembershipRepository.findAllBySpace_SpaceId(spaceId);
 
         List<UserDtoOut> friendsInSpace = new ArrayList<>();
 
