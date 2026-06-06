@@ -50,8 +50,15 @@ public class NotificationService {
 
     public void sendWelcomeNotification(Integer userId) {
 
+        User user = userRepository.findUserById(userId);
+
+        if (user == null) {
+            throw new ApiException("User not found");
+        }
         String message =
-                "مرحبًا بك في رواق 📚، ابدأ رحلتك القرائية اليوم.";
+                user.getName()
+                        + "، يسعدنا انضمامك إلينا! نتمنى لك رحلة قرائية ممتعة✨";
+
 
         sendNotification(userId,
                 "WELCOME",
@@ -91,7 +98,7 @@ public class NotificationService {
         String message =
                 "بناءً على آخر كتاب قرأته: "
                         + bookTitle
-                        + "\n\n🧠📚 مساعد رواق الذكي اختار لك 5 كتب قد تعجبك:\n\n"
+                        + "\n\n مساعد رواق الذكي اختار لك 5 كتب قد تعجبك:\n\n"
                         + booksText;
 
         sendNotification(
@@ -281,20 +288,40 @@ public class NotificationService {
         notificationRepository.save(notification);
     }
 // Added an email template to improve how notification emails look for users.
-    private String buildEmailTemplate(String title, String message) {
+private String buildEmailTemplate(String title, String message) {
 
-        return """
-            <div dir="rtl" style="font-family: Arial; background-color:#f7f5ef; padding:24px;">
-                <div style="max-width:600px; margin:auto; background-color:white; border-radius:12px; padding:24px;">
-                    <h2 style="color:#5a3e2b;">رواق 📚</h2>
-                    <h3>%s</h3>
-                    <p style="font-size:16px; line-height:1.8;">%s</p>
-                    <hr>
-                    <p style="font-size:13px; color:#888;">هذه رسالة تلقائية من منصة رواق.</p>
+    return """
+            <div dir="rtl" style="font-family: Arial, sans-serif; background-color:#f3eee6; padding:32px;">
+                <div style="max-width:620px; margin:auto; background-color:#ffffff; border-radius:18px; overflow:hidden; border:1px solid #d8bfa5;">
+                    
+                    <div style="background-color:#ffffff; padding:28px 28px 12px; text-align:right;">
+                        <h1 style="margin:0; color:#9b632d; font-size:42px; font-weight:bold;">رواق</h1>
+                        <p style="margin:6px 0 0; color:#9b632d; font-size:16px;">
+                            رفيقك الذكي في رحلتك القرائية
+                        </p>
+                    </div>
+
+                    <div style="height:8px; background-color:#9b632d;"></div>
+
+                    <div style="padding:30px 28px; text-align:right;">
+                        <h2 style="color:#4b2f1b; font-size:22px; margin:0 0 18px;">
+                            %s
+                        </h2>
+
+                        <p style="font-size:17px; line-height:2; color:#222; margin:0;">
+                            %s
+                        </p>
+                    </div>
+
+                    <div style="background-color:#dcc5ad; padding:18px 28px; text-align:center;">
+                        <p style="font-size:13px; color:#6b4426; margin:0;">
+                            - هذه رسالة تلقائية من منصة رواق -
+                        </p>
+                    </div>
                 </div>
             </div>
             """.formatted(title, message);
-    }
+}
 
     private NotificationDTOOut convertToDTO(Notification notification) {
         return new NotificationDTOOut(
