@@ -21,14 +21,4 @@ public class PostDTOOut {
     private Boolean analysisGenerated;
     private LocalDateTime analyzedAt;
 
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Data
-    public static class SpaceDTOOut {
-
-        private Integer spaceId;
-        private Integer bookId;
-        private String name;
-        private String description;
-    }
 }

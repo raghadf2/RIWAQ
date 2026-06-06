@@ -45,15 +45,15 @@ public class PostController {
         return ResponseEntity.ok(postService.getMostLikedPosts());
     }
 
-    @PostMapping("/add/{userId}")
-    public ResponseEntity<?> addPost(@PathVariable Integer userId, @RequestBody @Valid PostDTOIn dto) {
-        postService.addPost(userId, dto);
+    @PostMapping("/add/{userId}/{userBookId}")
+    public ResponseEntity<?> addPost(@PathVariable Integer userId, @PathVariable Integer userBookId, @RequestBody @Valid PostDTOIn dto) {
+        postService.addPost(userId, userBookId, dto);
         return ResponseEntity.status(200).body(new ApiResponse("Post added successfully"));
     }
 
-    @PutMapping("/update/{id}/{userId}")
-    public ResponseEntity<?> updatePost(@PathVariable Integer id, @PathVariable Integer userId, @RequestBody @Valid PostDTOIn dto) {
-        postService.updatePost(id, userId, dto);
+    @PutMapping("/update/{id}/{userId}/{userBookId}")
+    public ResponseEntity<?> updatePost(@PathVariable Integer id, @PathVariable Integer userId, @PathVariable Integer userBookId, @RequestBody @Valid PostDTOIn dto) {
+        postService.updatePost(id, userId, userBookId, dto);
         return ResponseEntity.status(200).body(new ApiResponse("Post updated successfully"));
     }
 

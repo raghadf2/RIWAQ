@@ -10,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -31,12 +32,6 @@ public class Review {
 
     @Column(nullable = false)
     private Boolean isEdited = false;
-
-//    @NotNull
-//    private Integer userId;
-//
-//    @NotNull
-//    private Integer bookId;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

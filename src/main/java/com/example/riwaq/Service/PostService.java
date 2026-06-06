@@ -98,20 +98,20 @@ public class PostService {
         return posts.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
-    public void addPost(Integer userId, PostDTOIn dto) {
+    public void addPost(Integer userId, Integer userBookId, PostDTOIn dto) {
         Post post = new Post();
         post.setContent(dto.getContent());
         post.setPageNumber(dto.getPageNumber());
-        User user = userRepository.findUserById(userId);
 
+        User user = userRepository.findUserById(userId);
         if (user == null) {
             throw new ApiException("User not found");
         }
-
         post.setUser(user);
 
-        if (dto.getUserBookId() != null) {
-            UserBook userBook = userBookRepository.findUserBookById(dto.getUserBookId());
+        // Changed: use path param userBookId instead of dto.getUserBookId()
+        if (userBookId != null) {
+            UserBook userBook = userBookRepository.findUserBookById(userBookId);
 
             if (userBook == null) {
                 throw new ApiException("UserBook not found");
@@ -135,7 +135,7 @@ public class PostService {
         postNotificationService.notifyReadersAboutPost(savedPost.getId());
     }
 
-    public void updatePost(Integer id, Integer userId, PostDTOIn dto) {
+    public void updatePost(Integer id, Integer userId, Integer userBookId, PostDTOIn dto) {
         Post post = postRepository.findPostById(id);
         if (post == null) {
             throw new ApiException("Post not found");
@@ -144,15 +144,13 @@ public class PostService {
         post.setPageNumber(dto.getPageNumber());
 
         User user = userRepository.findUserById(userId);
-
         if (user == null) {
             throw new ApiException("User not found");
         }
-
         post.setUser(user);
 
-        if (dto.getUserBookId() != null) {
-            UserBook userBook = userBookRepository.findUserBookById(dto.getUserBookId());
+        if (userBookId != null) {
+            UserBook userBook = userBookRepository.findUserBookById(userBookId);
 
             if (userBook == null) {
                 throw new ApiException("UserBook not found");
