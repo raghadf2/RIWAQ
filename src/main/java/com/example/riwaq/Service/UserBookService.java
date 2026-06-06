@@ -3,9 +3,11 @@ package com.example.riwaq.Service;
 import com.example.riwaq.Api.ApiException;
 import com.example.riwaq.DTO.IN.UserBookDtoIn;
 import com.example.riwaq.Model.Book;
+import com.example.riwaq.Model.Review;
 import com.example.riwaq.Model.User;
 import com.example.riwaq.Model.UserBook;
 import com.example.riwaq.Repository.BookRepository;
+import com.example.riwaq.Repository.ReviewRepository;
 import com.example.riwaq.Repository.UserBookRepository;
 import com.example.riwaq.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +26,9 @@ public class UserBookService {
     private final UserBookRepository userBookRepository;
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
-    private final OpenAIService  openAIService;
+    private final OpenAIService openAIService;
     private final NotificationService notificationService;
+    private final ReviewRepository reviewRepository;
 
     public void addUserBook(Integer userId, Integer bookId, UserBookDtoIn dto) {
 
@@ -64,12 +67,12 @@ public class UserBookService {
                 (dto.getCurrentPage() * 100) / book.getPageCount();
 
 //        في حال بدأ القراءة من اول ما اضف الكتاب
-        if(dto.getCurrentPage() > 0){
+        if (dto.getCurrentPage() > 0) {
             userBook.setStartedAt(LocalDate.now());
         }
 
         // وهنا لو اضافه وهو اصلا مكتمل
-        if(userBook.getStatus().equals("COMPLETED")){
+        if (userBook.getStatus().equals("COMPLETED")) {
             userBook.setFinishedAt(LocalDate.now());
         }
         userBook.setProgressPercentage(progress);
@@ -78,7 +81,8 @@ public class UserBookService {
         notificationService.sendBookAddedNotification(
                 user.getId(),
                 book.getTitle()
-        );    }
+        );
+    }
 
     public List<UserBook> getAllUserBooks() {
         return userBookRepository.findAll();
@@ -133,6 +137,7 @@ public class UserBookService {
 
         userBookRepository.save(userBook);
     }
+
     public void deleteUserBook(Integer userBookId) {
 
         UserBook userBook = userBookRepository.findUserBookById(userBookId);
@@ -142,7 +147,6 @@ public class UserBookService {
 
         userBookRepository.delete(userBook);
     }
-
 
 
     private String getStatus(Integer currentPage, Integer pageCount) {
@@ -160,25 +164,25 @@ public class UserBookService {
 
     // endpoint
 
-    public List<UserBook> getBooksByStatus(Integer userId, String status){
+    public List<UserBook> getBooksByStatus(Integer userId, String status) {
 
         User user = userRepository.findUserById(userId);
 
-        if(user == null){
+        if (user == null) {
             throw new ApiException("User not found");
         }
 
         List<UserBook> books =
-                userBookRepository.findUserBooksByUser_IdAndStatus(userId,status);
+                userBookRepository.findUserBooksByUser_IdAndStatus(userId, status);
 
-        if(books.isEmpty()){
+        if (books.isEmpty()) {
             throw new ApiException("No books found");
         }
 
         return books;
     }
 
-    public Map<String, Object> getDashboard(Integer userId){
+    public Map<String, Object> getDashboard(Integer userId) {
 
         List<UserBook> userBooks =
                 userBookRepository.findUserBooksByUser_Id(userId);
@@ -194,53 +198,59 @@ public class UserBookService {
         int almostCompletedBooks = 0;
         int highestProgress = 0;
         String highestProgressBook = "No books yet";
+        // Count how many reviews the user write
+        int userReviewsCount = 0;
 
-        for(UserBook userBook : userBooks){
+        List<Review> reviews = reviewRepository.findAll();
 
-            if(userBook.getStatus().equals("COMPLETED")){
+        for (Review review : reviews) {
+            if (review.getUser().getId().equals(userId)) {
+                userReviewsCount++;
+            }
+        }
+
+        for (UserBook userBook : userBooks) {
+
+            if (userBook.getStatus().equals("COMPLETED")) {
                 completed++;
-            }
-
-            else if(userBook.getStatus().equals("READING")){
+            } else if (userBook.getStatus().equals("READING")) {
                 reading++;
-            }
-
-            else{
+            } else {
                 notStarted++;
             }
 
-            if(userBook.getStartedAt() != null && userBook.getFinishedAt() != null){
+            if (userBook.getStartedAt() != null && userBook.getFinishedAt() != null) {
 
                 long days = ChronoUnit.DAYS.between(
                         userBook.getStartedAt(),
                         userBook.getFinishedAt()
                 );
 
-                if(days > longestDays){
+                if (days > longestDays) {
                     longestDays = days;
                     longestBook = userBook.getBook().getTitle();
                 }
             }
             Integer progress = userBook.getProgressPercentage();
 
-            if(progress == null){
+            if (progress == null) {
                 progress = 0;
             }
 
             totalProgress += progress;
 
-            if(progress >= 80 && progress < 100){
+            if (progress >= 80 && progress < 100) {
                 almostCompletedBooks++;
             }
 
-            if(progress > highestProgress){
+            if (progress > highestProgress) {
                 highestProgress = progress;
                 highestProgressBook = userBook.getBook().getTitle();
             }
         }
         int averageProgress = 0;
 
-        if(!userBooks.isEmpty()){
+        if (!userBooks.isEmpty()) {
             averageProgress = totalProgress / userBooks.size();
         }
 
@@ -275,7 +285,9 @@ public class UserBookService {
                         + ", عدد الكتب القريبة من الانتهاء = " + almostCompletedBooks
                         + ", أكثر كتاب متقدم فيه القارئ = " + highestProgressBook
                         + " بنسبة " + highestProgress + "%. "
-                        + "اكتب وصفًا قصيرًا للقارئ ونصيحة واحدة لتحسين عاداته القرائية.";
+                        + ", عدد التقييمات التي كتبها القارئ = " + userReviewsCount + ". "
+                        + "اكتب وصفًا قصيرًا للقارئ ونصيحة واحدة لتحسين عاداته القرائية."
+                        + "إذا كان عدد التقييمات قليلًا أو صفرًا، شجعه على إضافة تقييمات ليستفيد زوار المنصة.";
 
         Map<String, String> aiAnalysis =
                 openAIService.generateJsonAnalysis(prompt);
@@ -290,21 +302,23 @@ public class UserBookService {
         response.put("longestDays", longestDays);
         response.put("aiAnalysis", aiAnalysis);
         response.put("almostCompletedBooks", almostCompletedBooks);
-        response.put("averageProgress", averageProgress+ " %");
+        response.put("averageProgress", averageProgress + " %");
         response.put("highestProgressBook", highestProgressBook);
         response.put("highestProgress", highestProgress + " %");
+        response.put("userReviewsCount", userReviewsCount);
 
 
         return response;
     }
-    public List<UserBook> getBooksBetweenDates(LocalDate date1, LocalDate date2){
+
+    public List<UserBook> getBooksBetweenDates(LocalDate date1, LocalDate date2) {
         List<UserBook> books =
                 userBookRepository.findByStartedAtBetween(
                         date1,
                         date2
                 );
 
-        if(books.isEmpty()){
+        if (books.isEmpty()) {
             throw new ApiException("No books found in this date range");
         }
 
@@ -335,7 +349,7 @@ public class UserBookService {
         return List.of(suggestions.split("\n"));
     }
 
-    public List<UserBook> getAlmostCompletedBooks(Integer userId){
+    public List<UserBook> getAlmostCompletedBooks(Integer userId) {
 
         List<UserBook> books =
                 userBookRepository
@@ -345,12 +359,13 @@ public class UserBookService {
                                 100
                         );
 
-        if(books.isEmpty()){
+        if (books.isEmpty()) {
             throw new ApiException("No almost completed books found");
         }
 
         return books;
     }
+
     public void sendInactiveReadersReminders() {
 
         List<UserBook> userBooks =
