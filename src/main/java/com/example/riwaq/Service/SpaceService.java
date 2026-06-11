@@ -3,19 +3,16 @@ package com.example.riwaq.Service;
 import com.example.riwaq.Api.ApiException;
 import com.example.riwaq.DTO.IN.SpaceDTOIn;
 import com.example.riwaq.DTO.OUT.SpaceDTOOut;
-import com.example.riwaq.Model.Book;
-import com.example.riwaq.Model.Space;
-import com.example.riwaq.Model.User;
-import com.example.riwaq.Model.UserBook;
-import com.example.riwaq.Repository.BookRepository;
-import com.example.riwaq.Repository.SpaceRepository;
-import com.example.riwaq.Repository.UserBookRepository;
-import com.example.riwaq.Repository.UserRepository;
+import com.example.riwaq.DTO.OUT.SpaceStatisticsDTOOut;
+import com.example.riwaq.Model.*;
+import com.example.riwaq.Repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +23,7 @@ public class SpaceService {
     private final UserRepository userRepository;
     private final UserBookRepository userBookRepository;
     private final OpenAIService openAIService;
+    private final SpaceMembershipRepository spaceMembershipRepository;
 
     public void addSpace(Integer bookId, Integer creatorId, SpaceDTOIn dto) {
         Book book = bookRepository.findBookById(bookId);
@@ -217,4 +215,94 @@ public class SpaceService {
                         "\"reflectionPrompts\":\"سؤال 1 | سؤال 2 | سؤال 3 | سؤال 4 | سؤال 5\" }";
         return openAIService.generateJsonAnalysis(prompt);
     }
+
+
+    public SpaceStatisticsDTOOut getSpaceStatistics(Integer spaceId) {
+
+        Space space = spaceRepository.findSpaceBySpaceId(spaceId);
+
+        if (space == null) {
+            throw new ApiException("Space not found");
+        }
+
+        List<SpaceMembership> memberships =
+                spaceMembershipRepository.findAllBySpace_SpaceId(spaceId);
+
+        int membersCount = memberships.size();
+        int completedMembers = 0;
+        int readingMembers = 0;
+        int notStartedMembers = 0;
+
+        int totalProgress = 0;
+
+        Integer topUserId = null;
+        String topUsername = null;
+        int highestProgress = 0;
+
+        for (SpaceMembership membership : memberships) {
+
+            Integer userId = membership.getUser().getId();
+
+            UserBook userBook =
+                    userBookRepository.findUserBookByUser_IdAndBook_Id(
+                            userId,
+                            space.getBook().getId()
+                    );
+
+            if (userBook == null) {
+                notStartedMembers++;
+                continue;
+            }
+
+            Integer progress =
+                    userBook.getProgressPercentage() == null
+                            ? 0
+                            : userBook.getProgressPercentage();
+
+            totalProgress += progress;
+
+            if (userBook.getStatus().equalsIgnoreCase("COMPLETED")) {
+                completedMembers++;
+            } else if (userBook.getStatus().equalsIgnoreCase("READING")) {
+                readingMembers++;
+            } else {
+                notStartedMembers++;
+            }
+
+            if (progress > highestProgress) {
+                highestProgress = progress;
+                topUserId = userBook.getUser().getId();
+                topUsername = userBook.getUser().getUsername();
+            }
+        }
+
+        int averageProgress = 0;
+
+        if (membersCount > 0) {
+            averageProgress = totalProgress / membersCount;
+        }
+
+        return new SpaceStatisticsDTOOut(
+                space.getSpaceId(),
+                space.getName(),
+
+                space.getBook().getId(),
+                space.getBook().getTitle(),
+
+                space.getCreatorId(),
+
+                membersCount,
+                completedMembers,
+                readingMembers,
+                notStartedMembers,
+
+                averageProgress,
+
+                topUserId,
+                topUsername,
+                highestProgress
+        );
+    }
+
+
 }

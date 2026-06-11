@@ -42,4 +42,11 @@ public class SpaceMembershipController {
 
         return ResponseEntity.status(200).body(spaceMembershipService.getFriendsInSpace(spaceId, userId));
     }
+
+    @GetMapping("/eligible-friends/{spaceId}/{userId}")
+    public ResponseEntity<?> getEligibleFriendsToInvite(@PathVariable Integer spaceId, @PathVariable Integer userId) {
+
+        return ResponseEntity.status(200).body(spaceMembershipService.getEligibleFriendsToInvite(spaceId, userId));
+    }
+
 }

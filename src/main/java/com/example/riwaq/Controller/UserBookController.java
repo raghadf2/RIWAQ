@@ -91,4 +91,9 @@ public class UserBookController {
                 Map.of("message", "Reminders checked successfully")
         );
     }
+
+    @GetMapping("/streak/{userBookId}")
+    public ResponseEntity<?> getReadingStreak(@PathVariable Integer userBookId) {
+        return ResponseEntity.status(200).body(userBookService.getReadingStreak(userBookId));
+    }
 }

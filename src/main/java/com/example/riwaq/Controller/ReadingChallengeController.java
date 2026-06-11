@@ -21,9 +21,12 @@ public class ReadingChallengeController {
     private final WhatsAppService whatsAppService;
 
     @PostMapping("/add/{bookId}/{senderId}/{receiverId}")
-    public ResponseEntity<?> addChallenge(@PathVariable Integer bookId, @PathVariable Integer senderId, @PathVariable Integer receiverId, @RequestBody @Valid ReadingChallengeDTOIn dto) {
-        readingChallengeService.addChallenge(bookId, senderId, receiverId, dto);
-        return ResponseEntity.status(200).body(new ApiResponse("Reading challenge added successfully"));
+    public ResponseEntity<?> addChallenge(@PathVariable Integer bookId, @PathVariable Integer senderId,@PathVariable Integer receiverId) {
+
+        readingChallengeService.addChallenge(bookId, senderId, receiverId);
+
+        return ResponseEntity.status(200)
+                .body(new ApiResponse("Reading challenge added successfully"));
     }
 
     @GetMapping("/get")
@@ -70,6 +73,11 @@ public class ReadingChallengeController {
     public ResponseEntity<?> updateMyProgress(@PathVariable Integer challengeId, @PathVariable Integer userId, @PathVariable Integer page) {
         readingChallengeService.updateMyProgress(challengeId, userId, page);
         return ResponseEntity.status(200).body(new ApiResponse("Reading progress updated successfully"));
+    }
+
+    @GetMapping("/scoreboard/{challengeId}")
+    public ResponseEntity<?> getChallengeScoreboard(@PathVariable Integer challengeId) {
+        return ResponseEntity.status(200).body(readingChallengeService.getChallengeScoreboard(challengeId));
     }
 
 }

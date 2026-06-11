@@ -69,6 +69,11 @@ public class UserBookService {
 //        في حال بدأ القراءة من اول ما اضف الكتاب
         if (dto.getCurrentPage() > 0) {
             userBook.setStartedAt(LocalDate.now());
+            userBook.setReadingStreak(1);//@
+            userBook.setLastProgressUpdateAt(LocalDate.now());//@
+        } else {//@
+            userBook.setReadingStreak(0);
+            userBook.setLastProgressUpdateAt(null);
         }
 
         // وهنا لو اضافه وهو اصلا مكتمل
@@ -76,7 +81,6 @@ public class UserBookService {
             userBook.setFinishedAt(LocalDate.now());
         }
         userBook.setProgressPercentage(progress);
-        userBook.setLastProgressUpdateAt(LocalDate.now());
         userBookRepository.save(userBook);
         notificationService.sendBookAddedNotification(
                 user.getId(),
@@ -423,24 +427,53 @@ public class UserBookService {
 
     //============raghad add(streak)
     public void updateReadingStreak(UserBook userBook) {
+
         LocalDate today = LocalDate.now();
         LocalDate lastProgressDate = userBook.getLastProgressUpdateAt();
 
         if (lastProgressDate == null) {
             userBook.setReadingStreak(1);
-        } else {
-            long daysDifference = ChronoUnit.DAYS.between(lastProgressDate, today);
+            userBook.setLastProgressUpdateAt(today);
+            return;
+        }
 
-            if (daysDifference == 0) {
-                return;
-            } else if (daysDifference == 1) {
-                Integer currentStreak = userBook.getReadingStreak() == null ? 0 : userBook.getReadingStreak();
-                userBook.setReadingStreak(currentStreak + 1);
-            } else {
-                userBook.setReadingStreak(1);
-            }
+        long daysDifference = ChronoUnit.DAYS.between(lastProgressDate, today);
+
+        if (daysDifference == 0) {
+            return;
+        }
+
+        if (daysDifference == 1) {
+            Integer currentStreak =
+                    userBook.getReadingStreak() == null ? 0 : userBook.getReadingStreak();
+
+            userBook.setReadingStreak(currentStreak + 1);
+        } else {
+            userBook.setReadingStreak(1);
         }
 
         userBook.setLastProgressUpdateAt(today);
     }
+
+    public Map<String, Object> getReadingStreak(Integer userBookId) {
+
+        UserBook userBook = userBookRepository.findUserBookById(userBookId);
+
+        if (userBook == null) {
+            throw new ApiException("UserBook not found");
+        }
+
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("userBookId", userBook.getId());
+        response.put("userId", userBook.getUser().getId());
+        response.put("bookTitle", userBook.getBook().getTitle());
+        response.put("currentPage", userBook.getCurrentPage());
+        response.put("progressPercentage", userBook.getProgressPercentage());
+        response.put("readingStreak", userBook.getReadingStreak());
+        response.put("lastProgressUpdateAt", userBook.getLastProgressUpdateAt());
+
+        return response;
+    }
 }
+

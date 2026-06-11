@@ -2,6 +2,7 @@ package com.example.riwaq.Service;
 
 import com.example.riwaq.Api.ApiException;
 import com.example.riwaq.DTO.IN.ReadingChallengeDTOIn;
+import com.example.riwaq.DTO.OUT.ChallengeScoreboardDTOOut;
 import com.example.riwaq.DTO.OUT.ReadingChallengeDTOOut;
 import com.example.riwaq.Model.*;
 import com.example.riwaq.Repository.*;
@@ -29,15 +30,14 @@ public class ReadingChallengeService {
     private final WhatsAppService whatsAppService;
     private final UserBookService userBookService;
 
-    public void addChallenge(Integer bookId, Integer senderId, Integer receiverId, ReadingChallengeDTOIn dto) {
-        Book book = bookRepository.findBookById(bookId);
+    public void addChallenge(Integer bookId, Integer senderId, Integer receiverId) {
 
+        Book book = bookRepository.findBookById(bookId);
         if (book == null) {
             throw new ApiException("Book not found");
         }
 
         User sender = userRepository.findUserById(senderId);
-
         if (sender == null) {
             throw new ApiException("Sender not found");
         }
@@ -51,10 +51,12 @@ public class ReadingChallengeService {
             throw new ApiException("User cannot challenge themselves");
         }
 
-        Friendship friendship = friendshipRepository.findFriendshipBySender_IdAndReceiver_Id(senderId, receiverId);
+        Friendship friendship =
+                friendshipRepository.findFriendshipBySender_IdAndReceiver_Id(senderId, receiverId);
 
         if (friendship == null) {
-            friendship = friendshipRepository.findFriendshipBySender_IdAndReceiver_Id(receiverId, senderId);
+            friendship =
+                    friendshipRepository.findFriendshipBySender_IdAndReceiver_Id(receiverId, senderId);
         }
 
         if (friendship == null) {
@@ -65,21 +67,28 @@ public class ReadingChallengeService {
             throw new ApiException("Friendship must be accepted before creating challenge");
         }
 
-        UserBook senderBook = userBookRepository.findUserBookByUser_IdAndBook_Id(senderId, bookId);
+        UserBook senderBook =
+                userBookRepository.findUserBookByUser_IdAndBook_Id(senderId, bookId);
 
         if (senderBook == null) {
             throw new ApiException("Sender must add the book before creating challenge");
         }
 
-        if (senderBook.getStatus().equalsIgnoreCase("NOT_STARTED")) {
-            throw new ApiException("Sender must start reading the book before creating challenge");
-        }
 
-        validatePages(dto, book);
+        Integer senderCurrentPage = 0;
+        Integer receiverCurrentPage = 0;
 
-        ReadingChallenge existing1 = readingChallengeRepository.findReadingChallengeByBook_IdAndFriendship_IdAndStatusNot(book.getId(), friendship.getId(), "COMPLETED");
 
-        if (existing1 != null) {
+
+        ReadingChallenge existing =
+                readingChallengeRepository
+                        .findReadingChallengeByBook_IdAndFriendship_IdAndStatusNot(
+                                bookId,
+                                friendship.getId(),
+                                "COMPLETED"
+                        );
+
+        if (existing != null) {
             throw new ApiException("There is already an active challenge for this book between users");
         }
 
@@ -87,8 +96,8 @@ public class ReadingChallengeService {
 
         challenge.setFriendship(friendship);
         challenge.setBook(book);
-        challenge.setSenderPage(dto.getSenderPage());
-        challenge.setReceiverPage(dto.getReceiverPage());
+        challenge.setSenderPage(senderCurrentPage);
+        challenge.setReceiverPage(receiverCurrentPage);
         challenge.setStatus("PENDING");
         challenge.setCreatedAt(LocalDateTime.now());
 
@@ -290,7 +299,8 @@ public class ReadingChallengeService {
             throw new ApiException("Page cannot exceed book page count");
         }
 
-        UserBook userBook = userBookRepository.findUserBookByUser_IdAndBook_Id(userId, book.getId());
+        UserBook userBook =
+                userBookRepository.findUserBookByUser_IdAndBook_Id(userId, book.getId());
 
         if (userBook == null) {
             throw new ApiException("User book not found");
@@ -317,28 +327,24 @@ public class ReadingChallengeService {
             otherUserId = senderId;
         }
 
-        // ===== Streak Start ===== //
         Integer oldPage = userBook.getCurrentPage() == null ? 0 : userBook.getCurrentPage();
         boolean progressIncreased = page > oldPage;
-        // ===== Streak End ===== //
 
         userBook.setCurrentPage(page);
         userBook.setProgressPercentage((page * 100) / book.getPageCount());
 
         if (page.equals(book.getPageCount())) {
             userBook.setStatus("COMPLETED");
+            userBook.setFinishedAt(LocalDate.now());
         } else {
             userBook.setStatus("READING");
         }
 
-        // ===== Streak Start =====
         if (progressIncreased && page > 0) {
             userBookService.updateReadingStreak(userBook);
         }
-        // ===== Streak End =====
 
         userBookRepository.save(userBook);
-
 
         notificationService.sendChallengeProgressNotification(
                 otherUserId,
@@ -359,7 +365,7 @@ public class ReadingChallengeService {
 
             challenge.setWinner(winner);
             challenge.setStatus("COMPLETED");
-            challenge.setRespondedAt(LocalDateTime.now());
+            challenge.setCompletedAt(LocalDateTime.now());
 
             notificationService.sendChallengeWinnerNotification(
                     senderId,
@@ -376,11 +382,11 @@ public class ReadingChallengeService {
             );
 
             String whatsappMessage =
-                    " Reading Challenge Finished!\n\n" +
-                            " " + book.getTitle() + "\n" +
-                            " Winner: " + winner.getName() + "\n\n" +
-                            "Thanks for participating in the challenge. Keep reading, stay motivated, and see you in the next one! " +
-                            "\n\n— Team Riwaq";
+                    "🏆 انتهى تحدي القراءة!\n\n" +
+                            "📚 الكتاب: " + book.getTitle() + "\n" +
+                            "🥇 الفائز: " + winner.getName() + "\n\n" +
+                            "مبروك! استمروا في القراءة وموعدنا في تحدي جديد.\n\n" +
+                            "— فريق رواق";
 
             if (sender.getPhoneNumber() != null && !sender.getPhoneNumber().isBlank()) {
                 whatsAppService.sendWhatsAppMessage(sender.getPhoneNumber(), whatsappMessage);
@@ -393,7 +399,6 @@ public class ReadingChallengeService {
 
         readingChallengeRepository.save(challenge);
     }
-
     public List<ReadingChallengeDTOOut> getChallengesByStatus(String status) {
 
         if (!status.equalsIgnoreCase("PENDING") &&
@@ -420,7 +425,8 @@ public class ReadingChallengeService {
 
     public List<ReadingChallengeDTOOut> getChallengesByDate(LocalDate startDate, LocalDate endDate) {
 
-        List<ReadingChallenge> challenges = readingChallengeRepository.findReadingChallengesByCreatedAtBetween(startDate, endDate);
+        List<ReadingChallenge> challenges = readingChallengeRepository.findReadingChallengesByCreatedAtBetween(startDate.atStartOfDay(),
+                endDate.plusDays(1).atStartOfDay());//@
 
         if (challenges.isEmpty()) {
             throw new ApiException("No challenges found in this date range");
@@ -435,4 +441,83 @@ public class ReadingChallengeService {
         return dtoOutList;
     }
 
+    public ChallengeScoreboardDTOOut getChallengeScoreboard(Integer challengeId) {
+
+        ReadingChallenge challenge =
+                readingChallengeRepository.findReadingChallengeById(challengeId);
+
+        if (challenge == null) {
+            throw new ApiException("Challenge not found");
+        }
+
+        Book book = challenge.getBook();
+        User sender = challenge.getFriendship().getSender();
+        User receiver = challenge.getFriendship().getReceiver();
+
+        Integer senderPage =
+                challenge.getSenderPage() == null ? 0 : challenge.getSenderPage();
+
+        Integer receiverPage =
+                challenge.getReceiverPage() == null ? 0 : challenge.getReceiverPage();
+
+        Integer senderProgress =
+                (senderPage * 100) / book.getPageCount();
+
+        Integer receiverProgress =
+                (receiverPage * 100) / book.getPageCount();
+
+        Integer senderRemainingPages =
+                book.getPageCount() - senderPage;
+
+        Integer receiverRemainingPages =
+                book.getPageCount() - receiverPage;
+
+        String currentLeader;
+
+        if (senderPage > receiverPage) {
+            currentLeader = sender.getUsername();
+        } else if (receiverPage > senderPage) {
+            currentLeader = receiver.getUsername();
+        } else {
+            currentLeader = "Tie";
+        }
+
+        Integer winnerId = null;
+        String winnerUsername = null;
+
+        if (challenge.getWinner() != null) {
+            winnerId = challenge.getWinner().getId();
+            winnerUsername = challenge.getWinner().getUsername();
+        }
+
+        return new ChallengeScoreboardDTOOut(
+                challenge.getId(),
+
+                book.getId(),
+                book.getTitle(),
+                book.getPageCount(),
+
+                challenge.getStatus(),
+
+                sender.getId(),
+                sender.getUsername(),
+                senderPage,
+                senderProgress,
+                senderRemainingPages,
+
+                receiver.getId(),
+                receiver.getUsername(),
+                receiverPage,
+                receiverProgress,
+                receiverRemainingPages,
+
+                currentLeader,
+
+                winnerId,
+                winnerUsername,
+
+                challenge.getCreatedAt(),
+                challenge.getCompletedAt()
+        );
+    }
 }

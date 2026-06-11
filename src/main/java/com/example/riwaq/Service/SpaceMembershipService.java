@@ -1,6 +1,7 @@
 package com.example.riwaq.Service;
 
 import com.example.riwaq.Api.ApiException;
+import com.example.riwaq.DTO.OUT.EligibleFriendDTOOut;
 import com.example.riwaq.DTO.OUT.SpaceMembershipDTOOut;
 import com.example.riwaq.DTO.OUT.UserDtoOut;
 import com.example.riwaq.Model.*;
@@ -184,4 +185,79 @@ public class SpaceMembershipService {
         return friendsInSpace;
     }
 
+    public List<EligibleFriendDTOOut> getEligibleFriendsToInvite(Integer spaceId, Integer userId) {
+
+        User user = userRepository.findUserById(userId);
+
+        if (user == null) {
+            throw new ApiException("User not found");
+        }
+
+        Space space = spaceRepository.findSpaceBySpaceId(spaceId);
+
+        if (space == null) {
+            throw new ApiException("Space not found");
+        }
+
+        List<Friendship> friendships =
+                friendshipRepository.findFriendshipsByUserIdAndStatus(userId, "ACCEPTED");
+
+        if (friendships.isEmpty()) {
+            throw new ApiException("No accepted friends found");
+        }
+
+        List<EligibleFriendDTOOut> eligibleFriends = new ArrayList<>();
+
+        for (Friendship friendship : friendships) {
+
+            User friend;
+
+            if (friendship.getSender().getId().equals(userId)) {
+                friend = friendship.getReceiver();
+            } else {
+                friend = friendship.getSender();
+            }
+
+            SpaceMembership existingMembership =
+                    spaceMembershipRepository.findSpaceMembershipBySpace_SpaceIdAndUser_Id(
+                            spaceId,
+                            friend.getId()
+                    );
+
+            if (existingMembership != null) {
+                continue;
+            }
+
+            UserBook friendBook =
+                    userBookRepository.findUserBookByUser_IdAndBook_Id(
+                            friend.getId(),
+                            space.getBook().getId()
+                    );
+
+            if (friendBook == null) {
+                continue;
+            }
+
+            if (!friendBook.getStatus().equalsIgnoreCase("READING")
+                    && !friendBook.getStatus().equalsIgnoreCase("COMPLETED")) {
+                continue;
+            }
+
+            EligibleFriendDTOOut dto = new EligibleFriendDTOOut(
+                    friend.getId(),
+                    friend.getName(),
+                    friend.getUsername(),
+                    friendBook.getStatus(),
+                    friendBook.getProgressPercentage()
+            );
+
+            eligibleFriends.add(dto);
+        }
+
+        if (eligibleFriends.isEmpty()) {
+            throw new ApiException("No eligible friends found for this space");
+        }
+
+        return eligibleFriends;
+    }
 }
