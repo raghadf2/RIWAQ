@@ -55,4 +55,8 @@ public class SpaceController {
         return ResponseEntity.status(200).body(spaceService.generateReflectionPrompts(bookId, pageNumber));
     }
 
+    @GetMapping("/statistics/{spaceId}")
+    public ResponseEntity<?> getSpaceStatistics(@PathVariable Integer spaceId) {
+        return ResponseEntity.status(200).body(spaceService.getSpaceStatistics(spaceId));
+    }
 }

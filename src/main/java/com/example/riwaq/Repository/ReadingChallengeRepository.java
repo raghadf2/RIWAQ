@@ -16,7 +16,7 @@ public interface ReadingChallengeRepository extends JpaRepository<ReadingChallen
 
     List<ReadingChallenge> findReadingChallengesByStatus(String status);
 
-    List<ReadingChallenge> findReadingChallengesByCreatedAtBetween(LocalDate startDate, LocalDate endDate);
+    List<ReadingChallenge> findReadingChallengesByCreatedAtBetween(LocalDateTime  startDate, LocalDateTime  endDate);
 
     ReadingChallenge findReadingChallengeByBook_IdAndFriendship_IdAndStatusNot(Integer bookId, Integer friendshipId, String status);
 }
